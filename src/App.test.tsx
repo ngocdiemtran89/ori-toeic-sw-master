@@ -96,7 +96,7 @@ describe('App Component', () => {
     fireEvent.click(academicBtn);
 
     // Verify Academic top banner and headline
-    expect(screen.getByText(/Chuyên Sâu Văn Nghị Luận TOEIC Writing \(Question 8\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Chuyên Sâu Văn Nghị Luận TOEIC Writing/i)).toBeInTheDocument();
     expect(screen.getByText(/ORI ACADEMIC ESSAY ENGINE/i)).toBeInTheDocument();
 
     // Verify 3 core essay types
@@ -143,8 +143,8 @@ describe('App Component', () => {
     expect(screen.getByText(/Phòng Luyện Dịch Câu/i)).toBeInTheDocument();
 
     // Verify header and 120-item title
-    expect(screen.getByText(/Luyện Viết & Tập Dịch Câu TOEIC Speaking & Writing/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ngân Hàng 120 Câu Chuẩn ETS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Luyện Viết & Tập Dịch Câu TOEIC S&W/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ngân Hàng 120 Bài/i)).toBeInTheDocument();
 
     // Verify Part filters
     expect(screen.getByRole('button', { name: /Tất Cả 120 Bài/i })).toBeInTheDocument();
@@ -164,12 +164,12 @@ describe('App Component', () => {
     fireEvent.change(textarea, { target: { value: 'A female technician is meticulously inspecting' } });
 
     // Toggle reveal model answer
-    const revealBtn = screen.getByRole('button', { name: /Đối chiếu Đáp Án Mẫu Level 8-9/i });
+    const revealBtn = screen.getByRole('button', { name: /Đối chiếu Đáp Án Mẫu/i });
     fireEvent.click(revealBtn);
 
     // Check model answer is visible
     expect(screen.getByText(/Đáp Án Mẫu Chuẩn ETS \(Score 200\/200\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Phân tích & Bẫy cần tránh/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phân tích ngữ pháp & bẫy ETS/i)).toBeInTheDocument();
 
     // Switch to Final Task: Short Paragraph
     const paragraphFilterBtn = screen.getByRole('button', { name: /Task Cuối: Đoạn Văn Ngắn/i });
@@ -185,7 +185,7 @@ describe('App Component', () => {
     fireEvent.click(vocabNavBtn);
 
     // Verify mascot greeting updates
-    expect(screen.getByText(/Sân Chơi Từ Vựng & Collocations/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sân Chơi Từ Vựng/i)).toBeInTheDocument();
 
     // Verify Header
     expect(screen.getByText(/Học Từ Vựng & Collocations Theo Chủ Đề/i)).toBeInTheDocument();

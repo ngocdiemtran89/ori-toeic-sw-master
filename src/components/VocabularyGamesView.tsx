@@ -346,12 +346,11 @@ export const VocabularyGamesView: React.FC = () => {
               </span>
             </div>
 
-            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 0.35rem 0', color: 'var(--text-primary)' }}>
-              Học Từ Vựng & Collocations Theo Chủ Đề (Kèm Game)
+            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+              Học Từ Vựng & Collocations Theo Chủ Đề
             </h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '850px', lineHeight: 1.6 }}>
-              Học theo cụm từ cố định (Collocations) giúp phát âm tự nhiên, tránh bẫy dịch từng từ (Word-by-word), 
-              và tối ưu điểm Lexical Resource trong TOEIC Speaking & Writing thông qua 4 chế độ game hấp dẫn!
+            <p className="prose-lead" style={{ margin: 0, fontSize: '0.88rem' }}>
+              80 cụm từ Collocations đắt giá nhất trong đề thi ETS — Luyện phản xạ qua 4 minigame thông minh.
             </p>
           </div>
 
@@ -362,8 +361,8 @@ export const VocabularyGamesView: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                background: 'var(--bg-glass)',
-                border: '1px solid var(--border-glass)',
+                background: 'var(--box-inner-bg)',
+                border: '1px solid var(--border-subtle)',
                 padding: '0.5rem 0.85rem',
                 borderRadius: '12px'
               }}
@@ -380,8 +379,8 @@ export const VocabularyGamesView: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                background: 'var(--bg-glass)',
-                border: '1px solid var(--border-glass)',
+                background: 'var(--box-inner-bg)',
+                border: '1px solid var(--border-subtle)',
                 padding: '0.5rem 0.85rem',
                 borderRadius: '12px'
               }}
@@ -396,24 +395,54 @@ export const VocabularyGamesView: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Progressive Disclosure Guide */}
+        <details className="progressive-guide" style={{ marginTop: '0.85rem' }}>
+          <summary>
+            <span>💡 Xem quy luật ghi nhớ 80 cụm từ & hệ thống cộng điểm EXP</span>
+            <span style={{ fontSize: '0.75rem' }}>▼</span>
+          </summary>
+          <div className="progressive-guide-content">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+              <div>
+                <strong style={{ color: 'var(--text-main)' }}>🎯 4 Chế độ Game:</strong>
+                <ul style={{ paddingLeft: '1.2rem', marginTop: '0.35rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <li><strong>Thẻ nhớ 3D:</strong> +20 EXP mỗi khi đánh dấu thuộc.</li>
+                  <li><strong>Nối cụm từ:</strong> +50 EXP mỗi cặp đúng, combo streak nhận thưởng.</li>
+                  <li><strong>Điền từ tốc độ:</strong> +30 EXP mỗi từ điền chính xác.</li>
+                  <li><strong>Trắc nghiệm 10s:</strong> +40 EXP phản xạ nhanh trong 10 giây.</li>
+                </ul>
+              </div>
+              <div>
+                <strong style={{ color: 'var(--text-main)' }}>🌟 Vì sao cần học Collocations?</strong>
+                <p style={{ marginTop: '0.35rem', lineHeight: 1.6 }}>
+                  Giám khảo ETS chấm điểm bài Speaking & Writing dựa trên độ chuẩn xác của cụm từ (Lexical Resource).
+                  Thay vì dùng từ đơn lẻ dễ sai ngữ pháp, dùng cụm từ cố định giúp bạn đạt trọn vẹn Level 8–9!
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
 
-      {/* Theme Filters Bar */}
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      {/* Theme Filters Bar (Single-Row Horizontal Scrollable Pill Container) */}
+      <div className="pill-scroll-container">
         <button
           onClick={() => setSelectedThemeId('all')}
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             gap: '0.4rem',
-            padding: '0.5rem 0.85rem',
+            padding: '0.48rem 0.85rem',
             borderRadius: '10px',
-            border: selectedThemeId === 'all' ? '2px solid #8b5cf6' : '1px solid var(--border-glass)',
-            background: selectedThemeId === 'all' ? 'var(--bg-panel)' : 'var(--bg-glass)',
-            color: selectedThemeId === 'all' ? '#8b5cf6' : 'var(--text-primary)',
+            border: selectedThemeId === 'all' ? '2px solid #8b5cf6' : '1px solid var(--border-subtle)',
+            background: selectedThemeId === 'all' ? 'var(--bg-card)' : 'var(--box-inner-bg)',
+            color: selectedThemeId === 'all' ? '#8b5cf6' : 'var(--text-main)',
             fontWeight: 700,
             fontSize: '0.82rem',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            transition: 'all 0.18s ease'
           }}
         >
           <span>🌟</span> Tất Cả (80 Cụm Từ)
@@ -426,17 +455,19 @@ export const VocabularyGamesView: React.FC = () => {
               key={theme.id}
               onClick={() => setSelectedThemeId(theme.id)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                padding: '0.5rem 0.85rem',
+                padding: '0.48rem 0.85rem',
                 borderRadius: '10px',
-                border: isActive ? `2px solid ${theme.color}` : '1px solid var(--border-glass)',
-                background: isActive ? 'var(--bg-panel)' : 'var(--bg-glass)',
-                color: isActive ? theme.color : 'var(--text-primary)',
+                border: isActive ? `2px solid ${theme.color}` : '1px solid var(--border-subtle)',
+                background: isActive ? 'var(--bg-card)' : 'var(--box-inner-bg)',
+                color: isActive ? theme.color : 'var(--text-main)',
                 fontWeight: 700,
                 fontSize: '0.82rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.18s ease'
               }}
             >
               <span>{theme.icon}</span> {theme.name}
@@ -589,50 +620,66 @@ export const VocabularyGamesView: React.FC = () => {
               {/* Card Body (Front vs Back) */}
               {!isFlipped ? (
                 // FRONT
-                <div style={{ textAlign: 'center', margin: '2rem 0' }}>
-                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                <div style={{ textAlign: 'center', margin: '2.5rem 0' }}>
+                  <div
+                    style={{
+                      fontSize: '2.25rem',
+                      fontWeight: 800,
+                      color: 'var(--text-main)',
+                      marginBottom: '0.65rem',
+                      letterSpacing: '-0.025em',
+                      lineHeight: 1.25
+                    }}
+                  >
                     {currentCard.collocation}
                   </div>
-                  <div style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      color: 'var(--accent-blue)',
+                      fontFamily: 'var(--font-mono)',
+                      background: 'rgba(59, 130, 246, 0.12)',
+                      display: 'inline-block',
+                      padding: '0.2rem 0.75rem',
+                      borderRadius: '8px',
+                      fontWeight: 600
+                    }}
+                  >
                     {currentCard.ipa}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '1.25rem' }}>
-                    💡 Nhấn vào thẻ để xem nghĩa tiếng Việt & câu ví dụ ETS
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '1.5rem' }}>
+                    💡 Nhấn vào thẻ để lật xem nghĩa & câu ví dụ ETS
                   </div>
                 </div>
               ) : (
-                // BACK
-                <div style={{ margin: '1rem 0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                // BACK (Editorial Layout)
+                <div style={{ margin: '1rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Nghĩa tiếng Việt:
                     </div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.01em', marginTop: '0.15rem' }}>
                       {currentCard.vietnameseMeaning}
                     </div>
                   </div>
 
                   <div
-                    style={{
-                      background: 'rgba(99, 102, 241, 0.08)',
-                      borderRadius: '10px',
-                      padding: '0.75rem 0.9rem',
-                      borderLeft: '3px solid var(--accent-purple)'
-                    }}
+                    className="editorial-quote-box"
+                    style={{ padding: '0.85rem 1rem' }}
                   >
-                    <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-purple)', textTransform: 'uppercase' }}>
-                      Ví dụ ngữ cảnh TOEIC:
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--accent-purple)', textTransform: 'uppercase' }}>
+                      Ví dụ ngữ cảnh TOEIC ETS:
                     </div>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', marginTop: '0.2rem', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.96rem', color: 'var(--text-main)', marginTop: '0.25rem', fontWeight: 600, lineHeight: 1.65 }}>
                       "{currentCard.exampleSentenceEn}"
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem', lineHeight: 1.6 }}>
                       "{currentCard.exampleSentenceVi}"
                     </div>
                   </div>
 
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#f59e0b' }}>Bí kíp thi: </strong>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.6, background: 'var(--box-inner-bg)', padding: '0.6rem 0.85rem', borderRadius: '8px' }}>
+                    <strong style={{ color: '#f59e0b' }}>💡 Bí kíp làm bài: </strong>
                     {currentCard.etsContextNote}
                   </div>
                 </div>

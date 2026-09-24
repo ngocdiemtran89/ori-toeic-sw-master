@@ -114,12 +114,11 @@ export const OriAcademicView: React.FC = () => {
                 Level 9 (200/200 Điểm)
               </span>
             </div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.4rem 0', color: 'var(--text-primary)' }}>
-              Chuyên Sâu Văn Nghị Luận TOEIC Writing (Question 8)
+            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+              Chuyên Sâu Văn Nghị Luận TOEIC Writing (Task 8)
             </h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.92rem', maxWidth: '850px', lineHeight: 1.6 }}>
-              Phân loại 3 dạng bài nghị luận chủ chốt của ETS, giải mã công thức 4 đoạn chuẩn học thuật, cung cấp ngân hàng mẫu câu C1 và
-              chế độ <strong>Tập dịch song ngữ Anh - Việt</strong> giúp học viên làm quen với tư duy triển khai ý logic, mạch lạc.
+            <p className="prose-lead" style={{ margin: 0, fontSize: '0.88rem' }}>
+              Làm chủ 3 dạng đề thi ETS, công thức vàng 4 đoạn và tập dịch song ngữ tư duy Level 9 (200/200 điểm).
             </p>
           </div>
 
@@ -127,22 +126,50 @@ export const OriAcademicView: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.8rem',
-              background: 'var(--bg-glass)',
-              border: '1px solid var(--border-glass)',
-              padding: '0.75rem 1.1rem',
+              gap: '0.75rem',
+              background: 'var(--box-inner-bg)',
+              border: '1px solid var(--border-subtle)',
+              padding: '0.65rem 1rem',
               borderRadius: '12px'
             }}
           >
-            <div style={{ fontSize: '1.8rem' }}>🦉</div>
+            <div style={{ fontSize: '1.6rem' }}>🦉</div>
             <div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>Lời khuyên từ ORI:</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                Nắm vững 1 lập trường, phát triển 2 luận điểm sâu sắc và viết tối thiểu 300 từ nha!
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-main)' }}>Lời khuyên từ ORI:</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Chọn 1 lập trường rõ ràng, phát triển 2 luận điểm sâu và viết tối thiểu 300 từ nha!
               </div>
             </div>
           </div>
         </div>
+
+        {/* Progressive Disclosure Guide */}
+        <details className="progressive-guide" style={{ marginTop: '0.85rem' }}>
+          <summary>
+            <span>💡 Xem tiêu chuẩn chấm điểm ETS (Score 5/5) & cấu trúc 4 đoạn</span>
+            <span style={{ fontSize: '0.75rem' }}>▼</span>
+          </summary>
+          <div className="progressive-guide-content">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+              <div>
+                <strong style={{ color: 'var(--text-main)' }}>🎯 3 Tiêu chí ETS Task 8:</strong>
+                <ul style={{ paddingLeft: '1.2rem', marginTop: '0.35rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <li><strong>Organization & Development:</strong> Lập luận logic, luận cứ rõ ràng.</li>
+                  <li><strong>Grammar & Syntax:</strong> Câu phức, câu ghép, mệnh đề quan hệ chuẩn xác.</li>
+                  <li><strong>Vocabulary:</strong> Từ vựng học thuật, tránh lặp từ đơn giản.</li>
+                </ul>
+              </div>
+              <div>
+                <strong style={{ color: 'var(--text-main)' }}>⏱️ Phân bổ 30 phút thi:</strong>
+                <ul style={{ paddingLeft: '1.2rem', marginTop: '0.35rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <li><strong>3–4 phút:</strong> Brainstorming & lập dàn ý 2 lý do.</li>
+                  <li><strong>22–23 phút:</strong> Viết 4 đoạn (Mở bài, 2 Thân bài, Kết luận).</li>
+                  <li><strong>3–4 phút:</strong> Kiểm tra lỗi chính tả, thì và S-V agreement.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
 
       {/* Essay Category Selector (3 Dạng Đề) */}

@@ -532,15 +532,15 @@ export const App: React.FC = () => {
           <div className="mascot-bubble">
             {section === 'academic' ? (
               <>
-                <strong>🏛️ ORI Academic Hub:</strong> Chào mừng bạn! Nắm chắc công thức 4 đoạn và tập dịch song ngữ để rèn tư duy viết bài 200 điểm Level 9 nha!
+                <strong>🏛️ ORI Academic Hub:</strong> Làm chủ công thức 4 đoạn và tư duy bài luận Level 9 nha! ✨
               </>
             ) : section === 'translation' ? (
               <>
-                <strong>📝 Phòng Luyện Dịch Câu:</strong> Chào mừng bạn! Cùng ORI luyện dịch 120 câu và đoạn văn nền tảng để nói và viết tự nhiên như người bản xứ nhé! ✨
+                <strong>📝 Phòng Luyện Dịch Câu:</strong> 120 bài tập thực chiến giúp nói & viết tự nhiên như người bản xứ! ✨
               </>
             ) : section === 'vocabulary' ? (
               <>
-                <strong>🎯 Sân Chơi Từ Vựng & Collocations:</strong> Chào mừng bạn! Học 80 cụm từ song ngữ kết hợp 4 game phản xạ để tự tin nói viết tự nhiên như người bản xứ nha! ✨
+                <strong>🎯 Sân Chơi Từ Vựng:</strong> 80 collocations cốt lõi và 4 minigame phản xạ đang đợi bạn! ✨
               </>
             ) : (
               <>
