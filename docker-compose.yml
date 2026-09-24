@@ -1,0 +1,25 @@
+services:
+  toeic-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: toeic-sw-web-container
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    environment:
+      - NODE_ENV=production
+
+  toeic-tester:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run test && npm run build"
+    profiles:
+      - test
