@@ -1,5 +1,5 @@
 export type Mode = 'learning' | 'exam';
-export type Section = 'speaking' | 'writing';
+export type Section = 'speaking' | 'writing' | 'academic';
 
 export interface VocabularyHint {
   word: string;
@@ -13,10 +13,12 @@ export interface HintData {
   keyCollocations: VocabularyHint[];
   grammarTips: string[];
   commonPitfalls: string[];
+  proStrategyTips?: string[]; // High-level ETS examiner tips
 }
 
 export interface SpeakingQuestion {
   id: string;
+  testSetId?: number; // 1 to 10
   questionNumber: number; // 1 to 11
   part: number; // 1 to 5
   partName: string;
@@ -41,6 +43,7 @@ export interface SpeakingQuestion {
 
 export interface WritingQuestion {
   id: string;
+  testSetId?: number; // 1 to 10
   questionNumber: number; // 1 to 8
   part: number; // 1 to 3
   partName: string;
@@ -102,4 +105,53 @@ export interface EvaluationResult {
   phoneticFeedback?: PhoneticFeedback[];
   modelAnswer: string;
   actionableAdvice: string[];
+}
+
+// ==========================================
+// ORI ACADEMIC ESSAY MODULE INTERFACES
+// ==========================================
+
+export type EssayCategory = 'agree_disagree' | 'preference' | 'pros_cons';
+
+export interface BilingualSentence {
+  en: string;
+  vi: string;
+  highlightKeywords?: string[];
+  grammarNote?: string;
+}
+
+export interface BilingualParagraph {
+  paragraphTitle: string; // e.g. "Đoạn 1: Mở bài (Introduction)"
+  role: string; // "Hook & Thesis Statement"
+  sentences: BilingualSentence[];
+}
+
+export interface OriEssayTopic {
+  id: string;
+  category: EssayCategory;
+  categoryName: string; // "Dạng 1: Agree / Disagree (Đồng ý hay Phản đối)"
+  topicTitle: string;
+  prompt: string;
+  overviewStrategy: string;
+  brainstormingMap: {
+    coreQuestion: string;
+    recommendedStance: string;
+    reasons: {
+      point: string;
+      elaboration: string;
+      example: string;
+    }[];
+  };
+  masterFormula: {
+    introFormula: string[];
+    body1Formula: string[];
+    body2Formula: string[];
+    conclusionFormula: string[];
+  };
+  keySentenceTemplates: {
+    stage: string;
+    template: string;
+    vietnameseMeaning: string;
+  }[];
+  bilingualModelEssay: BilingualParagraph[];
 }

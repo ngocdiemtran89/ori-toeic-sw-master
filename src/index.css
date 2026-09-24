@@ -1060,3 +1060,45 @@ body {
 .key-input:focus {
   border-color: var(--accent-blue);
 }
+
+/* ========================================= */
+/* ORI ACADEMIC & BILINGUAL ESSAY STYLING    */
+/* ========================================= */
+.ori-academic-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.mode-academic {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3) !important;
+}
+
+.formula-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.formula-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .formula-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.test-set-select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.test-set-select:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .test-set-select:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+

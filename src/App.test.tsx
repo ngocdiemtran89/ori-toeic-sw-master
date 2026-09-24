@@ -88,4 +88,55 @@ describe('App Component', () => {
     fireEvent.click(resetBtn);
     expect(screen.getByRole('button', { name: /Bấm giờ canh thử/i })).toBeInTheDocument();
   });
+
+  it('navigates to ORI Academic section and renders 3 essay types and bilingual learning tabs', () => {
+    render(<App />);
+
+    const academicBtn = screen.getByRole('button', { name: /ORI Academic/i });
+    fireEvent.click(academicBtn);
+
+    // Verify Academic top banner and headline
+    expect(screen.getByText(/Chuyên Sâu Văn Nghị Luận TOEIC Writing \(Question 8\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/ORI ACADEMIC ESSAY ENGINE/i)).toBeInTheDocument();
+
+    // Verify 3 core essay types
+    expect(screen.getAllByText(/Agree \/ Disagree/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Preference \/ Choice/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Advantages vs Disadvantages/i)[0]).toBeInTheDocument();
+
+    // Switch to Bilingual Tab
+    const bilingualTabBtn = screen.getByRole('button', { name: /4\. Tập Dịch Song Ngữ/i });
+    fireEvent.click(bilingualTabBtn);
+
+    expect(screen.getByText(/Tập Dịch Song Ngữ & Phân Tích Bài Mẫu/i)).toBeInTheDocument();
+    expect(screen.getByText(/Đang hiện toàn bộ dịch/i)).toBeInTheDocument();
+
+    // Toggle reveal mode
+    const toggleRevealBtn = screen.getByRole('button', { name: /Đang hiện toàn bộ dịch/i });
+    fireEvent.click(toggleRevealBtn);
+    expect(screen.getByText(/Chế độ Tập Dịch \(Ẩn dịch\)/i)).toBeInTheDocument();
+  });
+
+  it('switches between test sets (Bộ Đề 1 to 10) dynamically', () => {
+    render(<App />);
+
+    const select = screen.getByLabelText('Chọn bộ đề') as HTMLSelectElement;
+    expect(select).toBeInTheDocument();
+    expect(select.value).toBe('1');
+
+    // Switch to Bộ Đề 2 (Công Nghệ Thông Tin, AI & Chuyển Đổi Số)
+    fireEvent.change(select, { target: { value: '2' } });
+    expect(select.value).toBe('2');
+
+    // The question prompt should update to Set 2's theme
+    expect(screen.getByText(/Summit here in downtown Chicago/i)).toBeInTheDocument();
+  });
+
+  it('displays pro strategy and examiner secret tips in Learning Mode', () => {
+    render(<App />);
+
+    // In Learning Mode by default, verify pro strategy tip header is displayed
+    expect(screen.getByText(/Bí Quyết Giám Khảo ETS/i)).toBeInTheDocument();
+  });
 });
+

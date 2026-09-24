@@ -25,7 +25,12 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { Mode, Section, SpeakingQuestion, WritingQuestion, EvaluationResult } from './types';
-import { SPEAKING_QUESTIONS, WRITING_QUESTIONS } from './data/mockQuestions';
+import {
+  TEST_SETS_METADATA,
+  getSpeakingQuestions,
+  getWritingQuestions
+} from './data/mockQuestions';
+import { OriAcademicView } from './components/OriAcademicView';
 import { playExamTone, AudioRecorderManager } from './utils/audio';
 import { evaluateToeicResponse } from './utils/aiEvaluator';
 
@@ -38,6 +43,7 @@ export const App: React.FC = () => {
   // Global States
   const [section, setSection] = useState<Section>('speaking');
   const [mode, setMode] = useState<Mode>('learning');
+  const [selectedSetId, setSelectedSetId] = useState<number>(1);
   const [speakingIndex, setSpeakingIndex] = useState<number>(0);
   const [writingIndex, setWritingIndex] = useState<number>(0);
 
@@ -71,11 +77,27 @@ export const App: React.FC = () => {
   const recorderRef = useRef<AudioRecorderManager | null>(null);
   const timerIntervalRef = useRef<number | null>(null);
 
-  const currentSpeakingQ: SpeakingQuestion = SPEAKING_QUESTIONS[speakingIndex] || SPEAKING_QUESTIONS[0];
-  const currentWritingQ: WritingQuestion = WRITING_QUESTIONS[writingIndex] || WRITING_QUESTIONS[0];
+  const speakingQuestions: SpeakingQuestion[] = getSpeakingQuestions(selectedSetId);
+  const writingQuestions: WritingQuestion[] = getWritingQuestions(selectedSetId);
 
-  const totalQuestions = section === 'speaking' ? SPEAKING_QUESTIONS.length : WRITING_QUESTIONS.length;
+  const currentSpeakingQ: SpeakingQuestion = speakingQuestions[speakingIndex] || speakingQuestions[0];
+  const currentWritingQ: WritingQuestion = writingQuestions[writingIndex] || writingQuestions[0];
+
+  const totalQuestions = section === 'speaking' ? speakingQuestions.length : writingQuestions.length;
   const currentIndex = section === 'speaking' ? speakingIndex : writingIndex;
+
+  const handleSetChange = (newSetId: number) => {
+    setSelectedSetId(newSetId);
+    setSpeakingIndex(0);
+    setWritingIndex(0);
+    resetQuestionState();
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    setTimerPhase('idle');
+    setTimeLeft(0);
+  };
 
   // Apply Theme to document root
   useEffect(() => {
@@ -265,14 +287,15 @@ export const App: React.FC = () => {
 
   const handleNextQuestion = () => {
     if (section === 'speaking') {
-      setSpeakingIndex((prev) => Math.min(SPEAKING_QUESTIONS.length - 1, prev + 1));
+      setSpeakingIndex((prev) => Math.min(speakingQuestions.length - 1, prev + 1));
     } else {
-      setWritingIndex((prev) => Math.min(WRITING_QUESTIONS.length - 1, prev + 1));
+      setWritingIndex((prev) => Math.min(writingQuestions.length - 1, prev + 1));
     }
   };
 
   // Submit and Evaluate
   const handleSubmitResponse = async () => {
+    if (section === 'academic') return;
     setIsEvaluating(true);
     try {
       const q = section === 'speaking' ? currentSpeakingQ : currentWritingQ;
@@ -359,17 +382,81 @@ export const App: React.FC = () => {
           <div className="pill-group">
             <button
               className={`pill-btn ${section === 'speaking' ? 'active' : ''}`}
-              onClick={() => setSection('speaking')}
+              onClick={() => {
+                setSection('speaking');
+                resetQuestionState();
+              }}
             >
               <Mic size={15} /> Speaking (11 Câu)
             </button>
             <button
               className={`pill-btn ${section === 'writing' ? 'active' : ''}`}
-              onClick={() => setSection('writing')}
+              onClick={() => {
+                setSection('writing');
+                resetQuestionState();
+              }}
             >
               <PenTool size={15} /> Writing (8 Câu)
             </button>
+            <button
+              className={`pill-btn ${section === 'academic' ? 'active mode-academic' : ''}`}
+              onClick={() => {
+                setSection('academic');
+                resetQuestionState();
+              }}
+              style={{
+                background: section === 'academic' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : undefined,
+                color: section === 'academic' ? '#fff' : undefined,
+                fontWeight: 700
+              }}
+            >
+              <span>🏛️</span> ORI Academic (Văn Nghị Luận)
+            </button>
           </div>
+
+          {/* 10 Test Sets Selector (Bộ Đề 1 - 10) */}
+          {section !== 'academic' && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                background: 'var(--bg-glass)',
+                border: '1px solid var(--border-glass)',
+                borderRadius: '10px',
+                padding: '0.35rem 0.75rem'
+              }}
+            >
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>
+                {mode === 'learning' ? '📚 BỘ ĐỀ HỌC:' : '⏱️ BỘ ĐỀ THI:'}
+              </span>
+              <select
+                className="test-set-select"
+                aria-label="Chọn bộ đề"
+                value={selectedSetId}
+                onChange={(e) => handleSetChange(Number(e.target.value))}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}
+              >
+                {TEST_SETS_METADATA.map((setMeta) => (
+                  <option
+                    key={setMeta.id}
+                    value={setMeta.id}
+                    style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                  >
+                    {setMeta.name}: {setMeta.titleVi} ({setMeta.theme})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Mode Selector */}
           <div className="pill-group">
@@ -413,7 +500,15 @@ export const App: React.FC = () => {
         <div className="mascot-profile">
           <span className="mascot-avatar">{greeting.mascot}</span>
           <div className="mascot-bubble">
-            <strong>{greeting.title}</strong> — {greeting.quote}
+            {section === 'academic' ? (
+              <>
+                <strong>🏛️ ORI Academic Hub:</strong> Chào mừng bạn! Nắm chắc công thức 4 đoạn và tập dịch song ngữ để rèn tư duy viết bài 200 điểm Level 9 nha!
+              </>
+            ) : (
+              <>
+                <strong>{greeting.title}</strong> — {greeting.quote}
+              </>
+            )}
           </div>
         </div>
         <div className="streak-badge">
@@ -447,50 +542,54 @@ export const App: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="main-workspace">
-        {/* Question Navigation Bar with Next / Prev arrows */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-          <button
-            className="action-btn"
-            onClick={handlePrevQuestion}
-            disabled={currentIndex === 0}
-            style={{ opacity: currentIndex === 0 ? 0.4 : 1 }}
-          >
-            <ChevronLeft size={16} /> Câu trước
-          </button>
+        {section === 'academic' ? (
+          <OriAcademicView />
+        ) : (
+          <>
+            {/* Question Navigation Bar with Next / Prev arrows */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+              <button
+                className="action-btn"
+                onClick={handlePrevQuestion}
+                disabled={currentIndex === 0}
+                style={{ opacity: currentIndex === 0 ? 0.4 : 1 }}
+              >
+                <ChevronLeft size={16} /> Câu trước
+              </button>
 
-          <div className="question-nav-bar" style={{ flex: 1, justifyContent: 'center' }}>
-            {section === 'speaking'
-              ? SPEAKING_QUESTIONS.map((q, idx) => (
-                  <button
-                    key={q.id}
-                    className={`q-tab ${idx === speakingIndex ? 'active' : ''}`}
-                    onClick={() => setSpeakingIndex(idx)}
-                  >
-                    <span>Q{q.questionNumber}</span>
-                    <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
-                  </button>
-                ))
-              : WRITING_QUESTIONS.map((q, idx) => (
-                  <button
-                    key={q.id}
-                    className={`q-tab ${idx === writingIndex ? 'active' : ''}`}
-                    onClick={() => setWritingIndex(idx)}
-                  >
-                    <span>Q{q.questionNumber}</span>
-                    <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
-                  </button>
-                ))}
-          </div>
+              <div className="question-nav-bar" style={{ flex: 1, justifyContent: 'center' }}>
+                {section === 'speaking'
+                  ? speakingQuestions.map((q, idx) => (
+                      <button
+                        key={q.id}
+                        className={`q-tab ${idx === speakingIndex ? 'active' : ''}`}
+                        onClick={() => setSpeakingIndex(idx)}
+                      >
+                        <span>Q{q.questionNumber}</span>
+                        <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
+                      </button>
+                    ))
+                  : writingQuestions.map((q, idx) => (
+                      <button
+                        key={q.id}
+                        className={`q-tab ${idx === writingIndex ? 'active' : ''}`}
+                        onClick={() => setWritingIndex(idx)}
+                      >
+                        <span>Q{q.questionNumber}</span>
+                        <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
+                      </button>
+                    ))}
+              </div>
 
-          <button
-            className="action-btn"
-            onClick={handleNextQuestion}
-            disabled={currentIndex === totalQuestions - 1}
-            style={{ opacity: currentIndex === totalQuestions - 1 ? 0.4 : 1 }}
-          >
-            Câu tiếp theo <ChevronRight size={16} />
-          </button>
-        </div>
+              <button
+                className="action-btn"
+                onClick={handleNextQuestion}
+                disabled={currentIndex === totalQuestions - 1}
+                style={{ opacity: currentIndex === totalQuestions - 1 ? 0.4 : 1 }}
+              >
+                Câu tiếp theo <ChevronRight size={16} />
+              </button>
+            </div>
 
         {/* Split Pane Grid */}
         <div className="split-pane-grid">
@@ -710,6 +809,28 @@ export const App: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Pro Strategy & Examiner Secret Tips */}
+                {((section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).proStrategyTips?.length ?? 0) > 0 && (
+                  <div
+                    className="hint-section"
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.08)',
+                      padding: '0.85rem',
+                      borderRadius: '10px',
+                      borderLeft: '4px solid var(--accent-purple)'
+                    }}
+                  >
+                    <span className="hint-title" style={{ color: 'var(--accent-purple)', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800 }}>
+                      <Sparkles size={15} /> Bí Quyết Giám Khảo ETS (Pro Examiner Secrets):
+                    </span>
+                    <ul className="hint-list" style={{ marginTop: '0.4rem' }}>
+                      {(section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).proStrategyTips!.map((tip, i) => (
+                        <li key={i} style={{ color: 'var(--text-secondary)' }}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {/* Sample Model Answer Box */}
                 {showSampleAnswer && (
                   <div className="sample-answer-box">
@@ -848,7 +969,9 @@ export const App: React.FC = () => {
             </div>
           </div>
         </div>
-      </main>
+      </>
+    )}
+  </main>
 
       {/* Official ETS Structure & Timing Modal */}
       {showFormatModal && (

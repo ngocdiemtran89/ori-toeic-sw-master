@@ -1,4 +1,6 @@
 import type { SpeakingQuestion, WritingQuestion } from '../types';
+import { generateSpeakingSet, generateWritingSet, TEST_SETS_METADATA } from './testSetsData';
+export { TEST_SETS_METADATA };
 
 export const SPEAKING_QUESTIONS: SpeakingQuestion[] = [
   // PART 1: Read a Text Aloud (Q1 - Q2)
@@ -30,6 +32,10 @@ export const SPEAKING_QUESTIONS: SpeakingQuestion[] = [
       commonPitfalls: [
         'Đọc vấp tên riêng hoặc từ viết tắt (WXYZ: đọc từng chữ cái W-X-Y-Z).',
         'Quên ngắt nghỉ ở dấu phẩy khiến câu bị trôi và hụt hơi.'
+      ],
+      proStrategyTips: [
+        'Bí quyết ETS: Trong 45s chuẩn bị, hãy phát âm to thành tiếng ít nhất 1 lần để cơ miệng quen với các âm khó.',
+        'Nếu đọc nhầm một từ, hãy bình tĩnh đọc lại từ đó một lần duy nhất rồi tiếp tục, giám khảo ETS sẽ chấm âm sửa sau cùng.'
       ]
     },
     sampleAnswer: {
@@ -758,3 +764,19 @@ In conclusion, far from being a frivolous expenditure of time, purposeful team-b
     }
   }
 ];
+
+// Accessors for 10 Practice and Mock Exam Sets
+export function getSpeakingQuestions(testSetId: number = 1): SpeakingQuestion[] {
+  if (testSetId === 1) {
+    return SPEAKING_QUESTIONS;
+  }
+  return generateSpeakingSet(testSetId);
+}
+
+export function getWritingQuestions(testSetId: number = 1): WritingQuestion[] {
+  if (testSetId === 1) {
+    return WRITING_QUESTIONS;
+  }
+  return generateWritingSet(testSetId);
+}
+
