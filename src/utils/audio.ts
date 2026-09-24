@@ -159,9 +159,24 @@ export class AudioRecorderManager {
     });
   }
 
+  cancelRecording(): void {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      try {
+        this.mediaRecorder.stop();
+      } catch {
+        // ignore
+      }
+    }
+    this.cleanup();
+  }
+
   private cleanup() {
     if (this.stream) {
-      this.stream.getTracks().forEach((track) => track.stop());
+      try {
+        this.stream.getTracks().forEach((track) => track.stop());
+      } catch {
+        // ignore
+      }
       this.stream = null;
     }
     if (this.sourceNode) {
@@ -173,5 +188,6 @@ export class AudioRecorderManager {
       this.sourceNode = null;
     }
     this.analyser = null;
+    this.mediaRecorder = null;
   }
 }

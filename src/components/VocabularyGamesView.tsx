@@ -294,12 +294,21 @@ export const VocabularyGamesView: React.FC = () => {
 
   // Pronounce TTS (Browser SpeechSynthesis API)
   const speakText = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.95;
-      window.speechSynthesis.speak(utterance);
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = voices.find((v) => v.lang.startsWith('en'));
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch {
+      // SpeechSynthesis suppressed or unsupported
     }
   };
 

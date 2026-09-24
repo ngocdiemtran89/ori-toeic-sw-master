@@ -145,16 +145,33 @@ export const App: React.FC = () => {
 
   // Reset inputs when switching questions or sections
   const resetQuestionState = () => {
+    if (recorderRef.current) {
+      recorderRef.current.cancelRecording();
+    }
     setWrittenText('');
     setAudioUrl(null);
     setAudioBase64(null);
     setIsRecording(false);
+    setVolumeLevel(0);
     setTimerPhase('idle');
     setShowSampleAnswer(false);
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
     }
   };
+
+  // Component unmount cleanup
+  useEffect(() => {
+    return () => {
+      if (recorderRef.current) {
+        recorderRef.current.cancelRecording();
+      }
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     resetQuestionState();

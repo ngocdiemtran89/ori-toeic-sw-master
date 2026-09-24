@@ -83,10 +83,12 @@ Return a strictly valid JSON response with this exact structure:
 
   // If audio is provided in base64, attach native audio part for Gemini 2.0 Flash
   if (userSubmission.audioBase64) {
-    const cleanBase64 = userSubmission.audioBase64.replace(/^data:audio\/\w+;base64,/, '');
+    const mimeMatch = userSubmission.audioBase64.match(/^data:(audio\/[^;]+);base64,/);
+    const detectedMime = mimeMatch ? mimeMatch[1] : 'audio/webm';
+    const cleanBase64 = userSubmission.audioBase64.replace(/^data:audio\/[^;]+;base64,/, '');
     parts.push({
       inline_data: {
-        mime_type: 'audio/webm',
+        mime_type: detectedMime,
         data: cleanBase64
       }
     });
@@ -114,7 +116,18 @@ Return a strictly valid JSON response with this exact structure:
     throw new Error('Empty response from Gemini');
   }
 
-  return JSON.parse(textOutput) as EvaluationResult;
+  let sanitized = textOutput.trim();
+  if (sanitized.startsWith('```json')) {
+    sanitized = sanitized.slice(7);
+  } else if (sanitized.startsWith('```')) {
+    sanitized = sanitized.slice(3);
+  }
+  if (sanitized.endsWith('```')) {
+    sanitized = sanitized.slice(0, -3);
+  }
+  sanitized = sanitized.trim();
+
+  return JSON.parse(sanitized) as EvaluationResult;
 }
 
 /**
