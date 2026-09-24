@@ -119,15 +119,15 @@ export const TranslationPracticeView: React.FC = () => {
                   color: '#10b981'
                 }}
               >
-                Ngân Hàng 60 Câu Chuẩn ETS
+                Ngân Hàng 120 Câu Chuẩn ETS
               </span>
             </div>
             <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 0.35rem 0', color: 'var(--text-primary)' }}>
               Luyện Viết & Tập Dịch Câu TOEIC Speaking & Writing
             </h1>
             <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '850px', lineHeight: 1.6 }}>
-              Chuyển ngữ từ ý tưởng tiếng Việt sang tiếng Anh tự nhiên. Chia đều theo từng phần thi: từ viết câu theo tranh, email thương mại,
-              miêu tả tranh O-P-B-A, phản xạ 15s/30s cho tới <strong>12 đoạn văn ngắn nền tảng</strong> giúp rèn tư duy ngữ pháp và từ vựng cho task cuối.
+              Chuyển ngữ từ ý tưởng tiếng Việt sang tiếng Anh tự nhiên. Chia đều 24 bài cho mỗi phần thi: từ viết câu theo tranh, email thương mại,
+              miêu tả tranh O-P-B-A, phản xạ 15s/30s cho tới <strong>24 đoạn văn ngắn nền tảng</strong> giúp rèn tư duy ngữ pháp và từ vựng cho task cuối.
             </p>
           </div>
 

@@ -225,6 +225,17 @@ body {
   color: #ffffff !important;
 }
 
+.pill-btn.active.mode-vocab {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+  color: #ffffff !important;
+  border: 1px solid #7c3aed !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+}
+[data-theme="dark"] .pill-btn.active.mode-vocab {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+  color: #ffffff !important;
+}
+
 .action-btn {
   display: flex;
   align-items: center;

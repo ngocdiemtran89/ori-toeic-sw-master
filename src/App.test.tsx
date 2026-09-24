@@ -132,7 +132,7 @@ describe('App Component', () => {
     expect(screen.getByText(/Summit here in downtown Chicago/i)).toBeInTheDocument();
   });
 
-  it('navigates to Translation Practice (Tập Viết Câu 60 Bài) section, filters parts, and reveals model answers', () => {
+  it('navigates to Translation Practice (Tập Viết Câu 120 Bài) section, filters parts, and reveals model answers', () => {
     render(<App />);
 
     const translationNavBtn = screen.getByRole('button', { name: /Tập Viết Câu/i });
@@ -142,12 +142,12 @@ describe('App Component', () => {
     // Verify mascot greeting updates
     expect(screen.getByText(/Phòng Luyện Dịch Câu/i)).toBeInTheDocument();
 
-    // Verify header and 60-item title
+    // Verify header and 120-item title
     expect(screen.getByText(/Luyện Viết & Tập Dịch Câu TOEIC Speaking & Writing/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ngân Hàng 60 Câu Chuẩn ETS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ngân Hàng 120 Câu Chuẩn ETS/i)).toBeInTheDocument();
 
     // Verify Part filters
-    expect(screen.getByRole('button', { name: /Tất Cả 60 Bài/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Tất Cả 120 Bài/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Part 1 Writing/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Part 2 Writing/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Speaking Part 2/i })).toBeInTheDocument();
@@ -175,6 +175,49 @@ describe('App Component', () => {
     const paragraphFilterBtn = screen.getByRole('button', { name: /Task Cuối: Đoạn Văn Ngắn/i });
     fireEvent.click(paragraphFilterBtn);
     expect(screen.getByText(/Đoạn văn tiếng Việt cần dịch/i)).toBeInTheDocument();
+  });
+
+  it('navigates to Vocabulary & Games section and switches between game modes', () => {
+    render(<App />);
+
+    const vocabNavBtn = screen.getByRole('button', { name: /Từ Vựng & Game/i });
+    expect(vocabNavBtn).toBeInTheDocument();
+    fireEvent.click(vocabNavBtn);
+
+    // Verify mascot greeting updates
+    expect(screen.getByText(/Sân Chơi Từ Vựng & Collocations/i)).toBeInTheDocument();
+
+    // Verify Header
+    expect(screen.getByText(/Học Từ Vựng & Collocations Theo Chủ Đề/i)).toBeInTheDocument();
+    expect(screen.getByText(/80 Cụm Từ Thực Chiến Song Ngữ/i)).toBeInTheDocument();
+
+    // Verify Theme buttons
+    expect(screen.getByRole('button', { name: /Văn Phòng & Nhân Sự/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Dịch Vụ & Khiếu Nại/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Công Nghệ & AI/i })).toBeInTheDocument();
+
+    // Verify Game Mode Tabs
+    const flashcardTab = screen.getByRole('button', { name: /1\. Thẻ Nhớ 3D/i });
+    const matcherTab = screen.getByRole('button', { name: /2\. Nối Cụm Từ/i });
+    const blitzTab = screen.getByRole('button', { name: /3\. Điền Từ Tốc Độ/i });
+    const quizTab = screen.getByRole('button', { name: /4\. Trắc Nghiệm Phản Xạ/i });
+
+    expect(flashcardTab).toBeInTheDocument();
+    expect(matcherTab).toBeInTheDocument();
+    expect(blitzTab).toBeInTheDocument();
+    expect(quizTab).toBeInTheDocument();
+
+    // Switch to Matcher Mode
+    fireEvent.click(matcherTab);
+    expect(screen.getByText(/Thử Thách Ghép Đôi Cụm Collocation/i)).toBeInTheDocument();
+
+    // Switch to Blitz Fill Mode
+    fireEvent.click(blitzTab);
+    expect(screen.getByText(/ĐIỀN TỪ CÒN THIẾU TRONG CỤM TỪ/i)).toBeInTheDocument();
+
+    // Switch to Speed Quiz Mode
+    fireEvent.click(quizTab);
+    expect(screen.getByText(/CHỌN CỤM TỪ TIẾNG ANH TỰ NHIÊN CHUẨN XÁC NHẤT/i)).toBeInTheDocument();
   });
 });
 

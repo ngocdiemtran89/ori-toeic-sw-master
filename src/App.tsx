@@ -32,6 +32,7 @@ import {
 } from './data/mockQuestions';
 import { OriAcademicView } from './components/OriAcademicView';
 import { TranslationPracticeView } from './components/TranslationPracticeView';
+import { VocabularyGamesView } from './components/VocabularyGamesView';
 import { playExamTone, AudioRecorderManager } from './utils/audio';
 import { evaluateToeicResponse } from './utils/aiEvaluator';
 
@@ -296,7 +297,7 @@ export const App: React.FC = () => {
 
   // Submit and Evaluate
   const handleSubmitResponse = async () => {
-    if (section === 'academic' || section === 'translation') return;
+    if (section === 'academic' || section === 'translation' || section === 'vocabulary') return;
     setIsEvaluating(true);
     try {
       const q = section === 'speaking' ? currentSpeakingQ : currentWritingQ;
@@ -425,12 +426,26 @@ export const App: React.FC = () => {
                 fontWeight: 700
               }}
             >
-              <span>📝</span> Tập Viết Câu (60 Bài)
+              <span>📝</span> Tập Viết Câu (120 Bài)
+            </button>
+            <button
+              className={`pill-btn ${section === 'vocabulary' ? 'active mode-vocab' : ''}`}
+              onClick={() => {
+                setSection('vocabulary');
+                resetQuestionState();
+              }}
+              style={{
+                background: section === 'vocabulary' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : undefined,
+                color: section === 'vocabulary' ? '#fff' : undefined,
+                fontWeight: 700
+              }}
+            >
+              <span>🎯</span> Từ Vựng & Game (80 Collocations)
             </button>
           </div>
 
           {/* 10 Test Sets Selector (Bộ Đề 1 - 10) */}
-          {section !== 'academic' && section !== 'translation' && (
+          {section !== 'academic' && section !== 'translation' && section !== 'vocabulary' && (
             <div
               style={{
                 display: 'flex',
@@ -521,7 +536,11 @@ export const App: React.FC = () => {
               </>
             ) : section === 'translation' ? (
               <>
-                <strong>📝 Phòng Luyện Dịch Câu:</strong> Chào mừng bạn! Cùng ORI luyện dịch 60 câu và đoạn văn nền tảng để nói và viết tự nhiên như người bản xứ nhé! ✨
+                <strong>📝 Phòng Luyện Dịch Câu:</strong> Chào mừng bạn! Cùng ORI luyện dịch 120 câu và đoạn văn nền tảng để nói và viết tự nhiên như người bản xứ nhé! ✨
+              </>
+            ) : section === 'vocabulary' ? (
+              <>
+                <strong>🎯 Sân Chơi Từ Vựng & Collocations:</strong> Chào mừng bạn! Học 80 cụm từ song ngữ kết hợp 4 game phản xạ để tự tin nói viết tự nhiên như người bản xứ nha! ✨
               </>
             ) : (
               <>
@@ -537,7 +556,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Mode Banner Indicator */}
-      {section !== 'academic' && section !== 'translation' && (
+      {section !== 'academic' && section !== 'translation' && section !== 'vocabulary' && (
         <div className={`mode-banner ${mode}`}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <span className="mode-badge">
@@ -567,6 +586,8 @@ export const App: React.FC = () => {
           <OriAcademicView />
         ) : section === 'translation' ? (
           <TranslationPracticeView />
+        ) : section === 'vocabulary' ? (
+          <VocabularyGamesView />
         ) : (
           <>
             {/* Question Navigation Bar with Next / Prev arrows */}

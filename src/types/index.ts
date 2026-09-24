@@ -1,5 +1,5 @@
 export type Mode = 'learning' | 'exam';
-export type Section = 'speaking' | 'writing' | 'academic' | 'translation';
+export type Section = 'speaking' | 'writing' | 'academic' | 'translation' | 'vocabulary';
 
 export type TranslationPart =
   | 'writing_p1' // Part 1 Writing: Viết câu theo tranh & 2 từ khóa
@@ -10,7 +10,7 @@ export type TranslationPart =
 
 export interface TranslationItem {
   id: string;
-  itemNumber: number; // 1 to 60
+  itemNumber: number; // 1 to 120
   part: TranslationPart;
   partName: string;
   partCategory: 'sentence' | 'paragraph';
@@ -178,3 +178,40 @@ export interface OriEssayTopic {
   }[];
   bilingualModelEssay: BilingualParagraph[];
 }
+
+// ==========================================
+// VOCABULARY & COLLOCATION GAME HUB TYPES
+// ==========================================
+
+export type CollocationPatternType =
+  | 'Verb + Noun'
+  | 'Adjective + Noun'
+  | 'Verb + Adverb'
+  | 'Prepositional Phrase';
+
+export interface ThematicCollocation {
+  id: string;
+  themeId: string;
+  themeName: string;
+  collocation: string;
+  ipa: string;
+  patternType: CollocationPatternType;
+  vietnameseMeaning: string;
+  verbOrFirstPart: string;
+  nounOrSecondPart: string;
+  exampleSentenceEn: string;
+  exampleSentenceVi: string;
+  etsContextNote: string;
+}
+
+export type VocabGameMode = 'flashcards' | 'matcher' | 'blitz_fill' | 'speed_quiz';
+
+export interface ThemeCategory {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  description: string;
+  collocationCount: number;
+}
+
