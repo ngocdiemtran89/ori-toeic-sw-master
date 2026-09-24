@@ -1,5 +1,28 @@
 export type Mode = 'learning' | 'exam';
-export type Section = 'speaking' | 'writing' | 'academic';
+export type Section = 'speaking' | 'writing' | 'academic' | 'translation';
+
+export type TranslationPart =
+  | 'writing_p1' // Part 1 Writing: Viết câu theo tranh & 2 từ khóa
+  | 'writing_p2' // Part 2 Writing: Email thương mại & Yêu cầu
+  | 'speaking_p2' // Speaking Part 2: Miêu tả tranh O-P-B-A
+  | 'speaking_p3_4' // Speaking Part 3 & 4: Trả lời trực diện & Lịch trình
+  | 'opinion_paragraphs'; // Task cuối Writing Q8 & Speaking Q11: Đoạn văn ngắn nền tảng
+
+export interface TranslationItem {
+  id: string;
+  itemNumber: number; // 1 to 60
+  part: TranslationPart;
+  partName: string;
+  partCategory: 'sentence' | 'paragraph';
+  title: string;
+  vietnamesePrompt: string;
+  targetGrammar: string;
+  vocabularyHints: { word: string; meaning: string; ipa?: string }[];
+  sampleEnglishAnswer: string;
+  alternativeAnswers?: string[];
+  analysis: string;
+  difficulty: 'Cơ bản (500+)' | 'Trung cấp (650+)' | 'Nâng cao (800+)';
+}
 
 export interface VocabularyHint {
   word: string;

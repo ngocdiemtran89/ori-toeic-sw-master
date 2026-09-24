@@ -31,6 +31,7 @@ import {
   getWritingQuestions
 } from './data/mockQuestions';
 import { OriAcademicView } from './components/OriAcademicView';
+import { TranslationPracticeView } from './components/TranslationPracticeView';
 import { playExamTone, AudioRecorderManager } from './utils/audio';
 import { evaluateToeicResponse } from './utils/aiEvaluator';
 
@@ -295,7 +296,7 @@ export const App: React.FC = () => {
 
   // Submit and Evaluate
   const handleSubmitResponse = async () => {
-    if (section === 'academic') return;
+    if (section === 'academic' || section === 'translation') return;
     setIsEvaluating(true);
     try {
       const q = section === 'speaking' ? currentSpeakingQ : currentWritingQ;
@@ -412,10 +413,24 @@ export const App: React.FC = () => {
             >
               <span>🏛️</span> ORI Academic (Văn Nghị Luận)
             </button>
+            <button
+              className={`pill-btn ${section === 'translation' ? 'active mode-translation' : ''}`}
+              onClick={() => {
+                setSection('translation');
+                resetQuestionState();
+              }}
+              style={{
+                background: section === 'translation' ? 'linear-gradient(135deg, #10b981, #059669)' : undefined,
+                color: section === 'translation' ? '#fff' : undefined,
+                fontWeight: 700
+              }}
+            >
+              <span>📝</span> Tập Viết Câu (60 Bài)
+            </button>
           </div>
 
           {/* 10 Test Sets Selector (Bộ Đề 1 - 10) */}
-          {section !== 'academic' && (
+          {section !== 'academic' && section !== 'translation' && (
             <div
               style={{
                 display: 'flex',
@@ -504,6 +519,10 @@ export const App: React.FC = () => {
               <>
                 <strong>🏛️ ORI Academic Hub:</strong> Chào mừng bạn! Nắm chắc công thức 4 đoạn và tập dịch song ngữ để rèn tư duy viết bài 200 điểm Level 9 nha!
               </>
+            ) : section === 'translation' ? (
+              <>
+                <strong>📝 Phòng Luyện Dịch Câu:</strong> Chào mừng bạn! Cùng ORI luyện dịch 60 câu và đoạn văn nền tảng để nói và viết tự nhiên như người bản xứ nhé! ✨
+              </>
             ) : (
               <>
                 <strong>{greeting.title}</strong> — {greeting.quote}
@@ -518,32 +537,36 @@ export const App: React.FC = () => {
       </div>
 
       {/* Mode Banner Indicator */}
-      <div className={`mode-banner ${mode}`}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <span className="mode-badge">
-            {mode === 'learning' ? '🎓 CHẾ ĐỘ HỌC' : '⏱️ CHẾ ĐỘ LUYỆN THI THỰC CHIẾN'}
-          </span>
-          <span>
-            {mode === 'learning'
-              ? 'Được hỗ trợ dàn ý chi tiết, từ vựng ăn điểm (Collocations), bài mẫu Level 8-9 và thời gian linh hoạt.'
-              : 'Mô phỏng 100% phòng thi ETS: Đồng hồ đếm ngược, tiếng Beep chuyển pha, khóa sao chép (No Copy-Paste).'}
-          </span>
+      {section !== 'academic' && section !== 'translation' && (
+        <div className={`mode-banner ${mode}`}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span className="mode-badge">
+              {mode === 'learning' ? '🎓 CHẾ ĐỘ HỌC' : '⏱️ CHẾ ĐỘ LUYỆN THI THỰC CHIẾN'}
+            </span>
+            <span>
+              {mode === 'learning'
+                ? 'Được hỗ trợ dàn ý chi tiết, từ vựng ăn điểm (Collocations), bài mẫu Level 8-9 và thời gian linh hoạt.'
+                : 'Mô phỏng 100% phòng thi ETS: Đồng hồ đếm ngược, tiếng Beep chuyển pha, khóa sao chép (No Copy-Paste).'}
+            </span>
+          </div>
+          {mode === 'learning' && (
+            <button
+              className="action-btn"
+              style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem' }}
+              onClick={() => setShowHints(!showHints)}
+            >
+              {showHints ? <EyeOff size={13} /> : <Eye size={13} />} {showHints ? 'Ẩn gợi ý' : 'Hiện gợi ý'}
+            </button>
+          )}
         </div>
-        {mode === 'learning' && (
-          <button
-            className="action-btn"
-            style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem' }}
-            onClick={() => setShowHints(!showHints)}
-          >
-            {showHints ? <EyeOff size={13} /> : <Eye size={13} />} {showHints ? 'Ẩn gợi ý' : 'Hiện gợi ý'}
-          </button>
-        )}
-      </div>
+      )}
 
       {/* Main Workspace */}
       <main className="main-workspace">
         {section === 'academic' ? (
           <OriAcademicView />
+        ) : section === 'translation' ? (
+          <TranslationPracticeView />
         ) : (
           <>
             {/* Question Navigation Bar with Next / Prev arrows */}

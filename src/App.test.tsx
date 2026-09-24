@@ -132,11 +132,49 @@ describe('App Component', () => {
     expect(screen.getByText(/Summit here in downtown Chicago/i)).toBeInTheDocument();
   });
 
-  it('displays pro strategy and examiner secret tips in Learning Mode', () => {
+  it('navigates to Translation Practice (Tập Viết Câu 60 Bài) section, filters parts, and reveals model answers', () => {
     render(<App />);
 
-    // In Learning Mode by default, verify pro strategy tip header is displayed
-    expect(screen.getByText(/Bí Quyết Giám Khảo ETS/i)).toBeInTheDocument();
+    const translationNavBtn = screen.getByRole('button', { name: /Tập Viết Câu/i });
+    expect(translationNavBtn).toBeInTheDocument();
+    fireEvent.click(translationNavBtn);
+
+    // Verify mascot greeting updates
+    expect(screen.getByText(/Phòng Luyện Dịch Câu/i)).toBeInTheDocument();
+
+    // Verify header and 60-item title
+    expect(screen.getByText(/Luyện Viết & Tập Dịch Câu TOEIC Speaking & Writing/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ngân Hàng 60 Câu Chuẩn ETS/i)).toBeInTheDocument();
+
+    // Verify Part filters
+    expect(screen.getByRole('button', { name: /Tất Cả 60 Bài/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Part 1 Writing/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Part 2 Writing/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Speaking Part 2/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Speaking Part 3 & 4/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Task Cuối: Đoạn Văn Ngắn/i })).toBeInTheDocument();
+
+    // Check presence of Vietnamese sentence prompt and vocabulary hints
+    expect(screen.getByText(/Câu tiếng Việt cần dịch/i)).toBeInTheDocument();
+    expect(screen.getByText(/Từ vựng & Collocations gợi ý/i)).toBeInTheDocument();
+
+    // Type into translation textarea
+    const textarea = screen.getByPlaceholderText(/Gõ bản dịch tiếng Anh/i);
+    expect(textarea).toBeInTheDocument();
+    fireEvent.change(textarea, { target: { value: 'A female technician is meticulously inspecting' } });
+
+    // Toggle reveal model answer
+    const revealBtn = screen.getByRole('button', { name: /Đối chiếu Đáp Án Mẫu Level 8-9/i });
+    fireEvent.click(revealBtn);
+
+    // Check model answer is visible
+    expect(screen.getByText(/Đáp Án Mẫu Chuẩn ETS \(Score 200\/200\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phân tích & Bẫy cần tránh/i)).toBeInTheDocument();
+
+    // Switch to Final Task: Short Paragraph
+    const paragraphFilterBtn = screen.getByRole('button', { name: /Task Cuối: Đoạn Văn Ngắn/i });
+    fireEvent.click(paragraphFilterBtn);
+    expect(screen.getByText(/Đoạn văn tiếng Việt cần dịch/i)).toBeInTheDocument();
   });
 });
 
