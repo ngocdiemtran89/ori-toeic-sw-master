@@ -196,6 +196,14 @@ describe('App Component', () => {
     expect(screen.getByRole('button', { name: /Dịch Vụ & Khiếu Nại/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Công Nghệ & AI/i })).toBeInTheDocument();
 
+    // Verify Word of the Day & Quests from screenshot design
+    expect(screen.getByText(/WORD OF THE DAY/i)).toBeInTheDocument();
+    expect(screen.getByText(/QUESTS/i)).toBeInTheDocument();
+
+    // Switch to Games tab via dock or Start button
+    const gamesDockBtn = screen.getByRole('button', { name: /Games/i });
+    fireEvent.click(gamesDockBtn);
+
     // Verify Game Mode Tabs
     const flashcardTab = screen.getByRole('button', { name: /1\. Thẻ Nhớ 3D/i });
     const matcherTab = screen.getByRole('button', { name: /2\. Nối Cụm Từ/i });
@@ -213,11 +221,11 @@ describe('App Component', () => {
 
     // Switch to Blitz Fill Mode
     fireEvent.click(blitzTab);
-    expect(screen.getByText(/ĐIỀN TỪ CÒN THIẾU TRONG CỤM TỪ/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Điền Từ Tốc Độ/i })).toBeInTheDocument();
 
     // Switch to Speed Quiz Mode
     fireEvent.click(quizTab);
-    expect(screen.getByText(/CHỌN CỤM TỪ TIẾNG ANH TỰ NHIÊN CHUẨN XÁC NHẤT/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Trắc Nghiệm Phản Xạ 10s/i })).toBeInTheDocument();
   });
 });
 

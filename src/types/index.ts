@@ -202,9 +202,19 @@ export interface ThematicCollocation {
   exampleSentenceEn: string;
   exampleSentenceVi: string;
   etsContextNote: string;
+  imageUrl?: string;
 }
 
 export type VocabGameMode = 'flashcards' | 'matcher' | 'blitz_fill' | 'speed_quiz';
+export type VocabSubTab = 'today' | 'cards' | 'games' | 'library';
+
+export interface DailyQuest {
+  id: string;
+  title: string;
+  targetMode: VocabGameMode;
+  rewardExp: number;
+  completed: boolean;
+}
 
 export interface ThemeCategory {
   id: string;

@@ -1287,4 +1287,269 @@ body {
   padding: 0.5rem;
 }
 
+/* ========================================= */
+/* AESTHETIC VOCABULARY APP (MOBILE & WEB)   */
+/* ========================================= */
+
+/* Optional iPhone Frame for Mockup / Mobile Focus Mode */
+.mobile-device-shell {
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 10px solid #1e293b;
+  border-radius: 44px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] .mobile-device-shell {
+  border-color: #cbd5e1;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-notch-island {
+  width: 120px;
+  height: 28px;
+  background: #0f172a;
+  border-radius: 20px;
+  margin: 0.5rem auto 0.25rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+[data-theme="light"] .mobile-notch-island {
+  background: #1e293b;
+}
+
+.mobile-device-content {
+  padding: 0.85rem 1.15rem 5rem 1.15rem;
+  min-height: 720px;
+  overflow-y: auto;
+}
+
+/* Desktop Widescreen Mode (Expansive Bento) */
+.web-widescreen-layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .web-widescreen-layout {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: start;
+  }
+}
+
+/* Word of the Day Hero Card */
+.word-of-day-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 24px;
+  padding: 1.25rem 1.35rem;
+  color: #1e293b;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 28px -8px rgba(245, 158, 11, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+[data-theme="dark"] .word-of-day-card {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(69, 26, 3, 0.4) 100%);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #f8fafc;
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
+}
+
+.word-of-day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px -10px rgba(245, 158, 11, 0.3);
+}
+
+.word-hero-title {
+  font-family: var(--font-sans);
+  font-size: 1.95rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0.25rem 0;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .word-hero-title {
+  color: #ffffff;
+}
+
+.word-hero-image-wrap {
+  width: 140px;
+  height: 140px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
+
+.word-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.word-of-day-card:hover .word-hero-image {
+  transform: scale(1.05);
+}
+
+/* Quests Section */
+.quests-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quest-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: var(--box-inner-bg);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quest-item:hover {
+  border-color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateX(3px);
+}
+
+.quest-item.completed {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+/* "Play with words." Editorial Banner */
+.play-words-banner {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.08));
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.play-words-headline {
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.start-mint-btn {
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.start-mint-btn:hover {
+  transform: scale(1.05);
+  background: #059669;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+}
+
+/* Mini Games Bento Cards */
+.bento-game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.bento-game-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 130px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-game-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-purple);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile Bottom Dock Navigation */
+.mobile-bottom-dock {
+  position: sticky;
+  bottom: 0.75rem;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--header-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  margin-top: 1rem;
+}
+
+.dock-item-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.35rem 0.65rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.dock-item-btn.active {
+  color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.12);
+  transform: translateY(-2px);
+}
+
+
 
