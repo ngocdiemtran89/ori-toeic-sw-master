@@ -59,4 +59,33 @@ describe('App Component', () => {
     fireEvent.click(closeBtn);
     expect(screen.queryByText(/Cấu Trúc & Thời Gian Thi TOEIC SW Chuẩn ETS Mới Nhất/i)).not.toBeInTheDocument();
   });
+
+  it('allows starting, pausing, and resetting practice timer in Learning Mode', () => {
+    render(<App />);
+
+    // In Learning Mode by default, check that practice timer button is present
+    const practiceTimerBtn = screen.getByRole('button', { name: /Bấm giờ canh thử/i });
+    expect(practiceTimerBtn).toBeInTheDocument();
+
+    // Start practice timer
+    fireEvent.click(practiceTimerBtn);
+
+    // Timer pill appears with prep or practice time
+    expect(screen.getByText(/Chuẩn bị: 00:/i)).toBeInTheDocument();
+
+    // Pause and Reset controls are visible
+    const pauseBtn = screen.getByRole('button', { name: /Tạm dừng/i });
+    expect(pauseBtn).toBeInTheDocument();
+
+    const resetBtn = screen.getByRole('button', { name: /Đặt lại/i });
+    expect(resetBtn).toBeInTheDocument();
+
+    // Click pause -> should change to "Tiếp tục"
+    fireEvent.click(pauseBtn);
+    expect(screen.getByRole('button', { name: /Tiếp tục/i })).toBeInTheDocument();
+
+    // Click reset -> should reset back to initial practice timer button
+    fireEvent.click(resetBtn);
+    expect(screen.getByRole('button', { name: /Bấm giờ canh thử/i })).toBeInTheDocument();
+  });
 });

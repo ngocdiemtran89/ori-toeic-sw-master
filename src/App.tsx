@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Settings,
   Play,
+  Pause,
   Eye,
   EyeOff,
   Sun,
@@ -50,7 +51,7 @@ export const App: React.FC = () => {
   // Timer & Exam Simulation States
   const [timerPhase, setTimerPhase] = useState<'idle' | 'prep' | 'response' | 'completed'>('idle');
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isTimerPaused] = useState<boolean>(false);
+  const [isTimerPaused, setIsTimerPaused] = useState<boolean>(false);
 
   // UI Scaffolding States (Learning Mode)
   const [showSampleAnswer, setShowSampleAnswer] = useState<boolean>(false);
@@ -201,8 +202,29 @@ export const App: React.FC = () => {
     }
   };
 
-  // Start Exam Simulation Flow
+  // Start Timer for Learning Practice Mode
+  const handleStartPracticeTimer = () => {
+    setIsTimerPaused(false);
+    if (section === 'speaking') {
+      if (currentSpeakingQ.prepTime > 0) {
+        playExamTone('prep_start');
+        setTimerPhase('prep');
+        setTimeLeft(currentSpeakingQ.prepTime);
+      } else {
+        playExamTone('speak_start');
+        setTimerPhase('response');
+        setTimeLeft(currentSpeakingQ.responseTime);
+      }
+    } else {
+      playExamTone('prep_start');
+      setTimerPhase('response');
+      setTimeLeft(currentWritingQ.timeLimit);
+    }
+  };
+
+  // Start Exam Simulation Flow (Strict ETS)
   const handleStartExamSimulation = () => {
+    setIsTimerPaused(false);
     if (section === 'speaking') {
       playExamTone('prep_start');
       setTimerPhase('prep');
@@ -212,6 +234,24 @@ export const App: React.FC = () => {
       setTimerPhase('response');
       setTimeLeft(currentWritingQ.timeLimit);
     }
+  };
+
+  // Skip Preparation and start speaking immediately
+  const handleSkipPrepToSpeak = () => {
+    playExamTone('speak_start');
+    setTimerPhase('response');
+    setTimeLeft(currentSpeakingQ.responseTime);
+    if (!isRecording) {
+      handleStartAudioRecording();
+    }
+  };
+
+  // Reset Timer to Idle
+  const handleResetTimer = () => {
+    setTimerPhase('idle');
+    setTimeLeft(0);
+    setIsTimerPaused(false);
+    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
   };
 
   // Next / Previous Question Navigation
@@ -466,21 +506,73 @@ export const App: React.FC = () => {
                 </p>
               </div>
 
-              {/* Timer Widget */}
+              {/* Timer Widget & Controls */}
               {timerPhase !== 'idle' ? (
-                <div className={`timer-pill ${timeLeft <= 5 ? 'urgent' : ''}`}>
-                  <Clock size={16} />
-                  <span>{timerPhase === 'prep' ? `Prep: ${formatSeconds(timeLeft)}` : formatSeconds(timeLeft)}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                  <div className={`timer-pill ${timeLeft <= 5 ? 'urgent' : ''}`}>
+                    <Clock size={16} />
+                    <span>
+                      {timerPhase === 'prep' ? `Chuẩn bị: ${formatSeconds(timeLeft)}` : `Làm bài: ${formatSeconds(timeLeft)}`}
+                    </span>
+                  </div>
+
+                  {/* Flexible Controls for Learning Mode */}
+                  {mode === 'learning' && (
+                    <>
+                      <button
+                        className="action-btn"
+                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
+                        onClick={() => setIsTimerPaused(!isTimerPaused)}
+                        title={isTimerPaused ? 'Tiếp tục đếm giờ' : 'Tạm dừng đếm giờ'}
+                      >
+                        {isTimerPaused ? <Play size={13} /> : <Pause size={13} />}
+                        {isTimerPaused ? 'Tiếp tục' : 'Tạm dừng'}
+                      </button>
+
+                      {section === 'speaking' && timerPhase === 'prep' && (
+                        <button
+                          className="action-btn"
+                          style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem', color: 'var(--accent-blue)' }}
+                          onClick={handleSkipPrepToSpeak}
+                          title="Bỏ qua thời gian chuẩn bị để vào nói ngay"
+                        >
+                          Vào nói luôn
+                        </button>
+                      )}
+
+                      <button
+                        className="action-btn"
+                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
+                        onClick={handleResetTimer}
+                        title="Đặt lại đồng hồ"
+                      >
+                        <RotateCcw size={13} /> Đặt lại
+                      </button>
+                    </>
+                  )}
                 </div>
-              ) : mode === 'exam' ? (
+              ) : mode === 'learning' ? (
                 <button
                   className="action-btn"
-                  style={{ background: 'rgba(244, 63, 94, 0.15)', borderColor: 'var(--accent-rose)', color: '#fb7185' }}
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.12)',
+                    borderColor: 'rgba(16, 185, 129, 0.35)',
+                    color: '#059669',
+                    fontWeight: 700
+                  }}
+                  onClick={handleStartPracticeTimer}
+                >
+                  <Clock size={14} /> Bấm giờ canh thử ({section === 'speaking' ? `Prep: ${currentSpeakingQ.prepTime}s • Nói: ${currentSpeakingQ.responseTime}s` : `${Math.round(currentWritingQ.timeLimit / 60)} phút`})
+                </button>
+              ) : (
+                <button
+                  className="action-btn"
+                  style={{ background: 'rgba(244, 63, 94, 0.15)', borderColor: 'var(--accent-rose)', color: '#fb7185', fontWeight: 700 }}
                   onClick={handleStartExamSimulation}
                 >
-                  <Play size={14} /> Bắt đầu bấm giờ
+                  <Play size={14} /> Bắt đầu bấm giờ ETS
                 </button>
-              ) : null}
+              )}
             </div>
 
             {/* Question Directions & Prompts */}
