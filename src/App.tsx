@@ -61,9 +61,9 @@ export const App: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isTimerPaused, setIsTimerPaused] = useState<boolean>(false);
 
-  // UI Scaffolding States (Learning Mode)
   const [showSampleAnswer, setShowSampleAnswer] = useState<boolean>(false);
   const [showHints, setShowHints] = useState<boolean>(true);
+  const [hintTab, setHintTab] = useState<'all' | 'outline' | 'collocations' | 'grammar' | 'pitfalls' | 'pro_tips'>('all');
 
   // Modals States
   const [showResultModal, setShowResultModal] = useState<boolean>(false);
@@ -607,6 +607,30 @@ export const App: React.FC = () => {
           <VocabularyGamesView />
         ) : (
           <>
+            {/* EdTech Learning Path Ribbon */}
+            <div className="edtech-ribbon">
+              <div className="edtech-ribbon-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>{section === 'speaking' ? '🎙️' : '✍️'}</span>
+                  <span>
+                    Bộ Đề #{selectedSetId} • Kỹ Năng {section.toUpperCase()}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-blue)', fontWeight: 800 }}>
+                  <span>Tiến độ:</span>
+                  <span style={{ background: 'rgba(56, 189, 248, 0.15)', padding: '0.15rem 0.5rem', borderRadius: '6px' }}>
+                    Câu {currentIndex + 1} / {totalQuestions}
+                  </span>
+                </div>
+              </div>
+              <div className="edtech-track">
+                <div
+                  className="edtech-fill"
+                  style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
+                />
+              </div>
+            </div>
+
             {/* Question Navigation Bar with Next / Prev arrows */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
               <button
@@ -623,7 +647,7 @@ export const App: React.FC = () => {
                   ? speakingQuestions.map((q, idx) => (
                       <button
                         key={q.id}
-                        className={`q-tab ${idx === speakingIndex ? 'active' : ''}`}
+                        className={`q-tab ${idx === speakingIndex ? 'active edtech-current' : ''}`}
                         onClick={() => setSpeakingIndex(idx)}
                       >
                         <span>Q{q.questionNumber}</span>
@@ -633,7 +657,7 @@ export const App: React.FC = () => {
                   : writingQuestions.map((q, idx) => (
                       <button
                         key={q.id}
-                        className={`q-tab ${idx === writingIndex ? 'active' : ''}`}
+                        className={`q-tab ${idx === writingIndex ? 'active edtech-current' : ''}`}
                         onClick={() => setWritingIndex(idx)}
                       >
                         <span>Q{q.questionNumber}</span>
@@ -844,34 +868,72 @@ export const App: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Outline */}
-                <div className="hint-section">
-                  <span className="hint-title">Chiến thuật làm bài (Strategy):</span>
-                  <ul className="hint-list">
-                    {(section === 'speaking' ? currentSpeakingQ.hints.structureOutline : currentWritingQ.hints.structureOutline).map((step, i) => (
-                      <li key={i}>{step}</li>
-                    ))}
-                  </ul>
+                {/* Segmented EdTech Hint Pills to prevent cognitive overload */}
+                <div className="edtech-hint-pill-bar" style={{ margin: '0.5rem 0' }}>
+                  <button
+                    type="button"
+                    className={`edtech-hint-tab-btn ${hintTab === 'all' ? 'active' : ''}`}
+                    onClick={() => setHintTab('all')}
+                  >
+                    🌟 Tất cả
+                  </button>
+                  <button
+                    type="button"
+                    className={`edtech-hint-tab-btn ${hintTab === 'outline' ? 'active' : ''}`}
+                    onClick={() => setHintTab('outline')}
+                  >
+                    📋 Dàn Ý Chiến Lược
+                  </button>
+                  <button
+                    type="button"
+                    className={`edtech-hint-tab-btn ${hintTab === 'collocations' ? 'active' : ''}`}
+                    onClick={() => setHintTab('collocations')}
+                  >
+                    💎 Cụm Collocations ({(section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).keyCollocations.length})
+                  </button>
+                  {((section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).proStrategyTips?.length ?? 0) > 0 && (
+                    <button
+                      type="button"
+                      className={`edtech-hint-tab-btn ${hintTab === 'pro_tips' ? 'active' : ''}`}
+                      onClick={() => setHintTab('pro_tips')}
+                    >
+                      ✨ Bí Quyết ETS
+                    </button>
+                  )}
                 </div>
+
+                {/* Outline */}
+                {(hintTab === 'all' || hintTab === 'outline') && (
+                  <div className="hint-section">
+                    <span className="hint-title">Chiến thuật làm bài (Strategy):</span>
+                    <ul className="hint-list">
+                      {(section === 'speaking' ? currentSpeakingQ.hints.structureOutline : currentWritingQ.hints.structureOutline).map((step, i) => (
+                        <li key={i}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Collocations */}
-                <div className="hint-section">
-                  <span className="hint-title">Từ vựng & Cụm từ đắt giá (High-Scoring Collocations):</span>
-                  <div className="collocation-grid">
-                    {(section === 'speaking' ? currentSpeakingQ.hints.keyCollocations : currentWritingQ.hints.keyCollocations).map((c, i) => (
-                      <div key={i} className="colloc-card">
-                        <div>
-                          <span className="colloc-word">{c.word}</span>
-                          {c.ipa && <span className="colloc-ipa">{c.ipa}</span>}
+                {(hintTab === 'all' || hintTab === 'collocations') && (
+                  <div className="hint-section">
+                    <span className="hint-title">Từ vựng & Cụm từ đắt giá (High-Scoring Collocations):</span>
+                    <div className="collocation-grid">
+                      {(section === 'speaking' ? currentSpeakingQ.hints.keyCollocations : currentWritingQ.hints.keyCollocations).map((c, i) => (
+                        <div key={i} className="colloc-card">
+                          <div>
+                            <span className="colloc-word">{c.word}</span>
+                            {c.ipa && <span className="colloc-ipa">{c.ipa}</span>}
+                          </div>
+                          <div className="colloc-meaning">{c.meaning}</div>
                         </div>
-                        <div className="colloc-meaning">{c.meaning}</div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Pro Strategy & Examiner Secret Tips */}
-                {((section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).proStrategyTips?.length ?? 0) > 0 && (
+                {(hintTab === 'all' || hintTab === 'pro_tips') && ((section === 'speaking' ? currentSpeakingQ.hints : currentWritingQ.hints).proStrategyTips?.length ?? 0) > 0 && (
                   <div
                     className="hint-section"
                     style={{
@@ -912,16 +974,53 @@ export const App: React.FC = () => {
 
           {/* Right Pane: Interactive Student Response Area */}
           <div className="glass-panel interactive-panel">
-            <div className="panel-header">
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="panel-header" style={{ alignItems: 'flex-start' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
                 {section === 'speaking' ? <Mic size={18} color="#3b82f6" /> : <PenTool size={18} color="#06b6d4" />}
                 {section === 'speaking' ? 'Khu Vực Ghi Âm Bài Nói' : 'Khu Vực Soạn Thảo Bài Viết'}
               </h3>
 
               {section === 'writing' && (
-                <div className="word-count-badge">
-                  Số từ: <strong>{wordsCount}</strong>
-                  {currentWritingQ.minWords ? ` / Tối thiểu ${currentWritingQ.minWords} từ` : ''}
+                <div className="edtech-goal-container">
+                  <div
+                    className="word-count-badge"
+                    style={{
+                      background: currentWritingQ.minWords && wordsCount >= currentWritingQ.minWords ? 'rgba(16, 185, 129, 0.15)' : 'var(--box-inner-bg)',
+                      color: currentWritingQ.minWords && wordsCount >= currentWritingQ.minWords ? '#10b981' : 'var(--text-main)',
+                      borderColor: currentWritingQ.minWords && wordsCount >= currentWritingQ.minWords ? '#10b981' : 'var(--border-subtle)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem'
+                    }}
+                  >
+                    <span>{currentWritingQ.minWords && wordsCount >= currentWritingQ.minWords ? '🎉' : '✍️'}</span>
+                    <span>
+                      Số từ: <strong>{wordsCount}</strong> {currentWritingQ.minWords ? `/ ${currentWritingQ.minWords} từ` : ''}
+                    </span>
+                  </div>
+
+                  {currentWritingQ.minWords && (
+                    <div style={{ width: '135px', height: '6px', background: 'var(--box-inner-bg)', borderRadius: '999px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                      <div
+                        style={{
+                          height: '100%',
+                          width: `${Math.min(100, (wordsCount / currentWritingQ.minWords) * 100)}%`,
+                          background: wordsCount >= currentWritingQ.minWords ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #38bdf8, #818cf8)',
+                          transition: 'width 0.3s ease'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {currentWritingQ.minWords && (
+                    <span style={{ fontSize: '0.72rem', color: wordsCount >= currentWritingQ.minWords ? '#10b981' : 'var(--text-muted)', fontWeight: 600 }}>
+                      {wordsCount >= currentWritingQ.minWords
+                        ? '⭐ Đạt chuẩn độ dài ETS! Hãy rà soát lại'
+                        : wordsCount >= 150
+                        ? '🚀 Đã xong nửa bài! Tiếp tục phát triển ý'
+                        : '💡 Bắt đầu viết mở bài và các luận điểm...'}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
