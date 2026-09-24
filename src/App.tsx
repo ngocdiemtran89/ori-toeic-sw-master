@@ -330,11 +330,11 @@ export const App: React.FC = () => {
       setEvaluationResult(result);
       setShowResultModal(true);
 
-      // Celebrate high scores!
-      if (result.scaledScore >= 160) {
+      // Celebrate maximum question scores!
+      if (result.rawScore === result.maxRawScore) {
         confetti({
-          particleCount: 120,
-          spread: 80,
+          particleCount: 100,
+          spread: 70,
           origin: { y: 0.6 }
         });
       }
@@ -1155,9 +1155,11 @@ export const App: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <Award size={24} color="#38bdf8" />
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>BẢNG CHẨN ĐOÁN KẾT QUẢ THEO BAREM ETS</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                    KẾT QUẢ ĐÁNH GIÁ CÂU HỎI #{section === 'speaking' ? currentSpeakingQ.questionNumber : currentWritingQ.questionNumber}
+                  </h3>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                    Kỹ năng: {section.toUpperCase()} | Câu hỏi #{section === 'speaking' ? currentSpeakingQ.questionNumber : currentWritingQ.questionNumber}
+                    Kỹ năng: {section.toUpperCase()} • Bộ Đề #{selectedSetId} • Barem Câu Hỏi: 0 - {evaluationResult.maxRawScore} Điểm ETS
                   </p>
                 </div>
               </div>
@@ -1167,9 +1169,25 @@ export const App: React.FC = () => {
             {/* Score Hero Card */}
             <div className="score-hero-card">
               <div className="scaled-score-circle">
-                <span className="score-huge">{evaluationResult.scaledScore}</span>
-                <span className="score-max">/ 200 Điểm Chuẩn ETS</span>
-                <div className="proficiency-badge">{evaluationResult.proficiencyLevel}</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  ĐIỂM CÂU HỎI #{section === 'speaking' ? currentSpeakingQ.questionNumber : currentWritingQ.questionNumber}
+                </div>
+                <span className="score-huge" style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '4px', margin: '0.2rem 0' }}>
+                  {evaluationResult.rawScore}
+                  <span style={{ fontSize: '1.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>/ {evaluationResult.maxRawScore}</span>
+                </span>
+                <span className="score-max">Điểm Barem Câu Hỏi (Raw Score)</span>
+                <div className="proficiency-badge" style={{ marginTop: '0.35rem' }}>
+                  {evaluationResult.rawScore === evaluationResult.maxRawScore
+                    ? '🌟 Xuất Sắc (Điểm Tối Đa)'
+                    : evaluationResult.rawScore >= Math.ceil(evaluationResult.maxRawScore * 0.6)
+                    ? '👍 Đạt Yêu Cầu (Khá Tốt)'
+                    : '⚠️ Cần Cải Thiện Thêm'}
+                </div>
+                <div style={{ marginTop: '0.65rem', padding: '0.35rem 0.65rem', borderRadius: '8px', background: 'var(--box-inner-bg)', fontSize: '0.74rem', color: 'var(--text-dim)', border: '1px solid var(--border-subtle)', lineHeight: 1.4 }}>
+                  📊 Dự phóng toàn bài: <strong>~{evaluationResult.scaledScore}/200</strong>
+                  <br />({evaluationResult.proficiencyLevel})
+                </div>
               </div>
 
               {/* Criteria Progress Bars */}
@@ -1214,6 +1232,11 @@ export const App: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Pedagogical Context Banner */}
+            <div style={{ background: 'var(--box-inner-bg)', padding: '0.65rem 0.9rem', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', borderLeft: '3px solid #0284c7' }}>
+              💡 <strong>Lưu ý về cách tính điểm:</strong> Bạn đang luyện tập từng câu (Câu #{section === 'speaking' ? currentSpeakingQ.questionNumber : currentWritingQ.questionNumber}). Điểm thực tế của câu này là <strong>{evaluationResult.rawScore}/{evaluationResult.maxRawScore} điểm</strong> theo barem ETS. Thang điểm 200 bên dưới là mức <em>dự phóng</em> nếu toàn bộ bài thi bạn đạt chất lượng tương đương.
             </div>
 
             {/* Examiner Summary */}

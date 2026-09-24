@@ -156,7 +156,9 @@ function generateHeuristicEvaluation(
       let rawScore = 3;
       const grammarCorrections = [];
 
-      if (keywordRatio < 1) {
+      if (wordCount < 4) {
+        rawScore = 1;
+      } else if (keywordRatio < 1) {
         rawScore = Math.max(1, rawScore - 1);
       }
       if (sentenceCount > 1) {
@@ -167,8 +169,26 @@ function generateHeuristicEvaluation(
         });
         rawScore = Math.min(rawScore, 2);
       }
-      if (wordCount < 6) {
-        rawScore = 1;
+      if (wordCount < 6 && rawScore > 1) {
+        rawScore = 2;
+      }
+
+      // Criterion scores strictly matching rawScore
+      let taskCompletion = 100;
+      let grammarAccuracy = 95;
+      let lexicalResource = 90;
+      let coherenceCohesion = 95;
+
+      if (rawScore === 2) {
+        taskCompletion = Math.max(65, Math.round(keywordRatio * 100));
+        grammarAccuracy = 70;
+        lexicalResource = 65;
+        coherenceCohesion = 70;
+      } else if (rawScore === 1) {
+        taskCompletion = Math.max(30, Math.round(keywordRatio * 100));
+        grammarAccuracy = 40;
+        lexicalResource = 40;
+        coherenceCohesion = 45;
       }
 
       const scaledScore = Math.round((rawScore / 3) * 190) + 10;
@@ -179,13 +199,15 @@ function generateHeuristicEvaluation(
         proficiencyLevel: getProficiencyLevel(scaledScore, 'writing'),
         summary: rawScore >= 3 
           ? 'Xuất sắc! Bạn đã sử dụng đầy đủ 2 từ khoá trong đúng 1 câu đơn/ghép hoàn chỉnh và ngữ pháp chính xác.' 
-          : 'Cần lưu ý sử dụng đầy đủ từ khoá quy định và giữ toàn bộ nội dung trong đúng 1 câu.',
+          : rawScore === 2
+          ? 'Khá tốt! Bạn đã tạo câu có nghĩa nhưng cần chú ý sử dụng đủ 2 từ khóa và giữ trong đúng 1 câu duy nhất.'
+          : 'Cần cải thiện: Câu viết còn quá ngắn hoặc chưa chứa từ khóa bắt buộc theo quy định của ETS.',
         scores: {
-          taskCompletion: Math.round(keywordRatio * 100),
-          grammarAccuracy: sentenceCount === 1 ? 95 : 65,
-          lexicalResource: 85,
+          taskCompletion,
+          grammarAccuracy,
+          lexicalResource,
           pronunciationFluency: 100,
-          coherenceCohesion: 90
+          coherenceCohesion
         },
         grammarCorrections,
         vocabularyUpgrades: [
@@ -210,11 +232,34 @@ function generateHeuristicEvaluation(
       const questionMarks = (text.match(/\?/g) || []).length;
 
       let rawScore = 4;
-      if (wordCount < 60) rawScore = 2;
+      if (wordCount < 30) rawScore = 1;
+      else if (wordCount < 60) rawScore = 2;
       else if (wordCount < 100) rawScore = 3;
-      if (questionMarks < 2) rawScore = Math.min(rawScore, 3);
+      if (questionMarks < 2 && rawScore > 2) rawScore = Math.min(rawScore, 3);
 
       const scaledScore = Math.round((rawScore / 4) * 180) + 20;
+
+      let taskCompletion = 95;
+      let grammarAccuracy = 90;
+      let lexicalResource = 88;
+      let coherenceCohesion = 92;
+
+      if (rawScore === 3) {
+        taskCompletion = 80;
+        grammarAccuracy = 78;
+        lexicalResource = 75;
+        coherenceCohesion = 78;
+      } else if (rawScore === 2) {
+        taskCompletion = 55;
+        grammarAccuracy = 60;
+        lexicalResource = 55;
+        coherenceCohesion = 58;
+      } else if (rawScore === 1) {
+        taskCompletion = 30;
+        grammarAccuracy = 40;
+        lexicalResource = 35;
+        coherenceCohesion = 35;
+      }
 
       return {
         rawScore,
@@ -223,11 +268,11 @@ function generateHeuristicEvaluation(
         proficiencyLevel: getProficiencyLevel(scaledScore, 'writing'),
         summary: `Bài viết hoàn thành tốt yêu cầu email công việc. Độ dài: ${wordCount} từ. ${hasGreeting && hasSignoff ? 'Đầy đủ chào hỏi và kết thư chuẩn mực.' : 'Cần bổ sung lời chào và lời kết trang trọng.'}`,
         scores: {
-          taskCompletion: Math.min(100, Math.round((wordCount / 120) * 100)),
-          grammarAccuracy: 85,
-          lexicalResource: 80,
+          taskCompletion,
+          grammarAccuracy,
+          lexicalResource,
           pronunciationFluency: 100,
-          coherenceCohesion: hasGreeting && hasSignoff ? 90 : 70
+          coherenceCohesion
         },
         grammarCorrections: [
           {
@@ -253,13 +298,40 @@ function generateHeuristicEvaluation(
 
     // Part 3: Opinion Essay (Q8)
     const minWords = wrtQ.minWords || 300;
-    const lengthScore = Math.min(100, Math.round((wordCount / minWords) * 100));
     let essayRaw = 5;
-    if (wordCount < 150) essayRaw = 2;
-    else if (wordCount < 250) essayRaw = 3;
+    if (wordCount < 80) essayRaw = 1;
+    else if (wordCount < 160) essayRaw = 2;
+    else if (wordCount < 240) essayRaw = 3;
     else if (wordCount < 300) essayRaw = 4;
 
     const scaledScore = Math.round((essayRaw / 5) * 180) + 20;
+
+    let taskCompletion = 95;
+    let grammarAccuracy = 92;
+    let lexicalResource = 90;
+    let coherenceCohesion = 92;
+
+    if (essayRaw === 4) {
+      taskCompletion = 85;
+      grammarAccuracy = 85;
+      lexicalResource = 82;
+      coherenceCohesion = 84;
+    } else if (essayRaw === 3) {
+      taskCompletion = 68;
+      grammarAccuracy = 70;
+      lexicalResource = 66;
+      coherenceCohesion = 68;
+    } else if (essayRaw === 2) {
+      taskCompletion = 45;
+      grammarAccuracy = 50;
+      lexicalResource = 45;
+      coherenceCohesion = 46;
+    } else if (essayRaw === 1) {
+      taskCompletion = 25;
+      grammarAccuracy = 35;
+      lexicalResource = 28;
+      coherenceCohesion = 30;
+    }
 
     return {
       rawScore: essayRaw,
@@ -268,11 +340,11 @@ function generateHeuristicEvaluation(
       proficiencyLevel: getProficiencyLevel(scaledScore, 'writing'),
       summary: `Bài luận đạt ${wordCount} từ (Khuyến nghị ETS: tối thiểu ${minWords} từ). Cấu trúc bài viết có sự phân chia các đoạn rõ ràng.`,
       scores: {
-        taskCompletion: lengthScore,
-        grammarAccuracy: 88,
-        lexicalResource: 84,
+        taskCompletion,
+        grammarAccuracy,
+        lexicalResource,
         pronunciationFluency: 100,
-        coherenceCohesion: 86
+        coherenceCohesion
       },
       grammarCorrections: [
         {
@@ -300,21 +372,49 @@ function generateHeuristicEvaluation(
   const spkQ = question as SpeakingQuestion;
   const isOpinion = spkQ.questionNumber === 11;
   const maxRaw = isOpinion ? 5 : 3;
-  const rawScore = isOpinion ? 4 : 3;
-  const scaledScore = isOpinion ? 170 : 180;
+  const duration = userSubmission.durationSeconds || 0;
+  const hasAudio = !!userSubmission.audioBase64;
+
+  let rawScore = isOpinion ? 4 : 3;
+  let scaledScore = isOpinion ? 170 : 180;
+  let taskCompletion = 92;
+  let grammarAccuracy = 88;
+  let lexicalResource = 88;
+  let pronunciationFluency = 87;
+  let coherenceCohesion = 90;
+
+  if (!hasAudio && duration < 3) {
+    rawScore = 1;
+    scaledScore = 40;
+    taskCompletion = 25;
+    grammarAccuracy = 30;
+    lexicalResource = 30;
+    pronunciationFluency = 25;
+    coherenceCohesion = 30;
+  } else if (duration > 0 && duration < 12) {
+    rawScore = 2;
+    scaledScore = 110;
+    taskCompletion = 60;
+    grammarAccuracy = 65;
+    lexicalResource = 65;
+    pronunciationFluency = 65;
+    coherenceCohesion = 65;
+  }
 
   return {
     rawScore,
     maxRawScore: maxRaw,
     scaledScore,
     proficiencyLevel: getProficiencyLevel(scaledScore, 'speaking'),
-    summary: 'Bài nói hoàn thành đúng thời lượng quy định. Âm lượng rõ ràng, nhịp thở ổn định và phản xạ nhanh.',
+    summary: rawScore >= 3
+      ? 'Bài nói hoàn thành đúng thời lượng quy định. Âm lượng rõ ràng, nhịp thở ổn định và phản xạ nhanh.'
+      : 'Cần lưu ý phát âm to rõ hơn và kéo dài thời lượng câu trả lời để đạt band điểm tối đa.',
     scores: {
-      taskCompletion: 92,
-      grammarAccuracy: 85,
-      lexicalResource: 88,
-      pronunciationFluency: 87,
-      coherenceCohesion: 90
+      taskCompletion,
+      grammarAccuracy,
+      lexicalResource,
+      pronunciationFluency,
+      coherenceCohesion
     },
     grammarCorrections: [
       {

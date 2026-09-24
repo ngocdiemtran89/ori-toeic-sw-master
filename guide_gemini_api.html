@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hướng Dẫn Học Tập & Kích Hoạt AI Chấm Điểm - ORI TOEIC SW MASTER</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 13.5px;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      font-size: 28px;
+      background: #eff6ff;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+    }
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+    .logo-text p {
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .web-tag {
+      text-align: right;
+      background: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .web-tag .url {
+      font-size: 12px;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .web-tag .caption {
+      font-size: 10.5px;
+      color: #64748b;
+    }
+
+    /* Core Alert Box */
+    .alert-banner {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .alert-banner h3 {
+      font-size: 14.5px;
+      color: #166534;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+    }
+    .alert-banner p {
+      font-size: 12.5px;
+      color: #1e3a8a;
+      line-height: 1.5;
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 16px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 4px solid #2563eb;
+      padding-left: 8px;
+    }
+
+    /* Comparison Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .compare-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fafafa;
+    }
+    .compare-card.free {
+      border-color: #cbd5e1;
+    }
+    .compare-card.ai {
+      border-color: #c7d2fe;
+      background: #fdfcff;
+    }
+    .compare-card h4 {
+      font-size: 13px;
+      font-weight: 750;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .compare-card ul {
+      list-style: none;
+      padding: 0;
+      font-size: 11.8px;
+      color: #334155;
+    }
+    .compare-card ul li {
+      margin-bottom: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .compare-card ul li::before {
+      content: "•";
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    /* Step by step cards */
+    .step-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 9px;
+      background: #ffffff;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+    .step-content h4 {
+      font-size: 13px;
+      font-weight: 750;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+    .step-content p {
+      font-size: 12px;
+      color: #475569;
+    }
+    .step-content .code-chip {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 11.5px;
+      color: #0f172a;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* Features 4-column overview */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .feat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .feat-card .icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .feat-card h5 {
+      font-size: 11.5px;
+      font-weight: 750;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .feat-card p {
+      font-size: 10.5px;
+      color: #64748b;
+      line-height: 1.35;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .footer strong {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-badge">
+      <div class="logo-icon">🦉</div>
+      <div class="logo-text">
+        <h1>ORI TOEIC SW MASTER</h1>
+        <p>Tài Liệu Hướng Dẫn Học Tập & Kích Hoạt AI Chấm Điểm</p>
+      </div>
+    </div>
+    <div class="web-tag">
+      <div class="url">ori-toeic-sw-master.netlify.app</div>
+      <div class="caption">Học trực tuyến trên Điện thoại & Web</div>
+    </div>
+  </div>
+
+  <!-- Key Clarification Banner -->
+  <div class="alert-banner">
+    <h3>✅ HỌC VIÊN CÓ BẮT BUỘC PHẢI GẮN GEMINI API KEY KHÔNG?</h3>
+    <p>
+      <strong>KHÔNG BẮT BUỘC!</strong> Ứng dụng được thiết kế sẵn <strong>Hệ Thống Chấm Điểm Kép</strong>: Ngay cả khi <strong>không gắn API Key</strong>, học viên vẫn có thể luyện Speaking, Writing, viết câu và giải đố từ vựng 100% bình thường. Hệ thống sẽ tự động sử dụng <strong>Bộ Giám Khảo Giả Lập ETS Heuristic</strong> để chấm điểm thang 0 - 200 kèm thang điểm Level chính xác!
+    </p>
+  </div>
+
+  <!-- Comparison -->
+  <div class="compare-grid">
+    <div class="compare-card free">
+      <h4>⚡ 1. Chế Độ Mặc Định (Không Cần API Key)</h4>
+      <ul>
+        <li>Vào web là học ngay, không cần đăng ký tài khoản hay cài đặt gì.</li>
+        <li>Tự động chấm điểm Speaking (Q1-11) & Writing (Q1-8) chuẩn khung ETS.</li>
+        <li>Tính điểm tổng 0 - 200, phân loại trình độ Level 1 đến Level 8.</li>
+        <li>Truy cập toàn bộ 10 bộ đề thi, 120 bài viết câu & 80 game collocations.</li>
+      </ul>
+    </div>
+    <div class="compare-card ai">
+      <h4>🤖 2. Chế Độ AI Chuyên Sâu (Khi Gắn Gemini Key)</h4>
+      <ul>
+        <li>Kích hoạt thêm trí tuệ nhân tạo cao cấp Google Gemini 2.0 Flash.</li>
+        <li>Nhận xét tỉ mỉ từng lỗi ngữ pháp, phát âm và từ vựng của bài thi.</li>
+        <li>Viết lại câu theo phong cách người bản xứ (Band 8-9) để học viên tham khảo.</li>
+        <li><strong>Hoàn toàn MIỄN PHÍ</strong> từ Google AI Studio (hạn mức 15 lượt chấm/phút).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4 Steps to get Gemini API Key -->
+  <div class="section-title">🔑 4 BƯỚC NHẬN GOOGLE GEMINI API KEY MIỄN PHÍ (DÀNH CHO HỌC VIÊN)</div>
+
+  <div class="step-box">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Truy cập Google AI Studio</h4>
+      <p>Dùng trình duyệt (Chrome/Safari) đăng nhập vào đường link: <strong style="color: #2563eb;">https://aistudio.google.com/</strong> bằng tài khoản Gmail cá nhân của bạn.</p>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Nhấn vào nút "Get API key"</h4>
+      <p>Tại thanh menu bên trái (hoặc góc trên bên phải màn hình), nhấn vào nút màu xanh có chữ <strong>"Get API key"</strong>.</p>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Tạo mới API Key</h4>
+      <p>Nhấn nút <strong>"Create API key"</strong> -> Chọn <em>"Create API key in new project"</em>. Google sẽ tạo mã chỉ trong 3 giây.</p>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Sao chép và Lưu trữ</h4>
+      <p>Bấm nút <strong>Copy</strong> để sao chép chuỗi ký tự API Key. Chuỗi này thường có dạng:</p>
+      <div class="code-chip">AIzaSyB3X... (chuỗi ký tự bảo mật cá nhân)</div>
+    </div>
+  </div>
+
+  <!-- How to paste into web -->
+  <div class="section-title">📲 CÁCH DÁN API KEY VÀO ỨNG DỤNG ĐỂ SỬ DỤNG</div>
+  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; line-height: 1.6;">
+    <p>1️⃣ Truy cập website: <strong style="color: #2563eb;">https://ori-toeic-sw-master.netlify.app</strong> trên máy tính hoặc điện thoại.</p>
+    <p>2️⃣ Kéo xuống cuối trang, nhấn vào nút <strong>⚙️ Cài Đặt AI</strong> (hoặc biểu tượng Bánh Răng).</p>
+    <p>3️⃣ Dán chuỗi mã <code style="background: #e2e8f0; padding: 1px 5px; border-radius: 3px;">AIzaSy...</code> vào ô <em>"Dán Google Gemini API Key tại đây"</em>.</p>
+    <p>4️⃣ Nhấn <strong>"Lưu Cấu Hình"</strong>. Key được lưu bảo mật ngay trên máy bạn và sẵn sàng chấm điểm chuyên sâu!</p>
+  </div>
+
+  <!-- Overview of 4 learning pillars -->
+  <div class="section-title">📚 CÁC MỤC HỌC TẬP CHÍNH TRONG HỆ THỐNG ORI TOEIC</div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="icon">🎙️</div>
+      <h5>TOEIC Speaking</h5>
+      <p>11 câu hỏi / đề thi. Luyện đọc, tả tranh, phản xạ và bày tỏ quan điểm.</p>
+    </div>
+    <div class="feat-card">
+      <div class="icon">✍️</div>
+      <h5>TOEIC Writing</h5>
+      <p>8 câu hỏi / đề thi. Viết câu theo tranh, phản hồi email và viết luận 300 từ.</p>
+    </div>
+    <div class="feat-card">
+      <div class="icon">🏛️</div>
+      <h5>ORI Academic</h5>
+      <p>3 dạng văn nghị luận Q8 (Opinion, Problem, Advantage) kèm bài mẫu band cao.</p>
+    </div>
+    <div class="feat-card">
+      <div class="icon">🎯</div>
+      <h5>Từ Vựng & Game</h5>
+      <p>80 collocations thực chiến, nhiệm vụ hàng ngày, 4 minigame học vui nhộn.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>Hệ Thống Đào Tạo Tiếng Anh Chuyên Nghiệp <strong>ORI TOEIC</strong></div>
+    <div>Website: <strong>ori-toeic-sw-master.netlify.app</strong></div>
+  </div>
+
+</body>
+</html>
