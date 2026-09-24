@@ -17,7 +17,7 @@ describe('App Component', () => {
   it('switches between Speaking and Writing sections', () => {
     render(<App />);
 
-    const writingBtn = screen.getByRole('button', { name: /Writing \(Q1-8\)/i });
+    const writingBtn = screen.getByRole('button', { name: /Writing/i });
     fireEvent.click(writingBtn);
 
     expect(screen.getByText(/Khu Vực Soạn Thảo Bài Viết/i)).toBeInTheDocument();
@@ -43,5 +43,20 @@ describe('App Component', () => {
 
     fireEvent.click(themeToggle);
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
+
+  it('opens and closes the official ETS format and timing guide modal', () => {
+    render(<App />);
+
+    const formatBtn = screen.getByRole('button', { name: /Barem & Cấu Trúc ETS/i });
+    fireEvent.click(formatBtn);
+
+    expect(screen.getByText(/Cấu Trúc & Thời Gian Thi TOEIC SW Chuẩn ETS Mới Nhất/i)).toBeInTheDocument();
+    expect(screen.getByText(/11 Câu Hỏi \(~20 Phút\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/8 Câu Hỏi \(~60 Phút\)/i)).toBeInTheDocument();
+
+    const closeBtn = screen.getByText('✕');
+    fireEvent.click(closeBtn);
+    expect(screen.queryByText(/Cấu Trúc & Thời Gian Thi TOEIC SW Chuẩn ETS Mới Nhất/i)).not.toBeInTheDocument();
   });
 });

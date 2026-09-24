@@ -17,7 +17,10 @@ import {
   Sun,
   Moon,
   Flame,
-  Heart
+  Heart,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { Mode, Section, SpeakingQuestion, WritingQuestion, EvaluationResult } from './types';
@@ -53,21 +56,25 @@ export const App: React.FC = () => {
   const [showSampleAnswer, setShowSampleAnswer] = useState<boolean>(false);
   const [showHints, setShowHints] = useState<boolean>(true);
 
+  // Modals States
+  const [showResultModal, setShowResultModal] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const [showFormatModal, setShowFormatModal] = useState<boolean>(false);
+
   // Evaluation States
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
-  const [showResultModal, setShowResultModal] = useState<boolean>(false);
-
-  // Settings Modal State
-  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [geminiApiKey, setGeminiApiKey] = useState<string>(() => localStorage.getItem('gemini_api_key') || '');
 
   // Audio Recorder Reference
   const recorderRef = useRef<AudioRecorderManager | null>(null);
   const timerIntervalRef = useRef<number | null>(null);
 
-  const currentSpeakingQ: SpeakingQuestion = SPEAKING_QUESTIONS[speakingIndex];
-  const currentWritingQ: WritingQuestion = WRITING_QUESTIONS[writingIndex];
+  const currentSpeakingQ: SpeakingQuestion = SPEAKING_QUESTIONS[speakingIndex] || SPEAKING_QUESTIONS[0];
+  const currentWritingQ: WritingQuestion = WRITING_QUESTIONS[writingIndex] || WRITING_QUESTIONS[0];
+
+  const totalQuestions = section === 'speaking' ? SPEAKING_QUESTIONS.length : WRITING_QUESTIONS.length;
+  const currentIndex = section === 'speaking' ? speakingIndex : writingIndex;
 
   // Apply Theme to document root
   useEffect(() => {
@@ -207,6 +214,23 @@ export const App: React.FC = () => {
     }
   };
 
+  // Next / Previous Question Navigation
+  const handlePrevQuestion = () => {
+    if (section === 'speaking') {
+      setSpeakingIndex((prev) => Math.max(0, prev - 1));
+    } else {
+      setWritingIndex((prev) => Math.max(0, prev - 1));
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (section === 'speaking') {
+      setSpeakingIndex((prev) => Math.min(SPEAKING_QUESTIONS.length - 1, prev + 1));
+    } else {
+      setWritingIndex((prev) => Math.min(WRITING_QUESTIONS.length - 1, prev + 1));
+    }
+  };
+
   // Submit and Evaluate
   const handleSubmitResponse = async () => {
     setIsEvaluating(true);
@@ -248,6 +272,35 @@ export const App: React.FC = () => {
 
   const wordsCount = writtenText.trim() ? writtenText.trim().split(/\s+/).length : 0;
 
+  // Accurate Timing Subtitle based on ETS official specifications
+  const getQuestionTimingSubtitle = () => {
+    if (section === 'speaking') {
+      const qNum = currentSpeakingQ.questionNumber;
+      if (qNum <= 2) {
+        return `Part 1 • Câu ${qNum}/11: Đọc to đoạn văn | Chuẩn bị: 45s • Nói: 45s (Tiêu chí: Phát âm, Trọng âm, Ngữ điệu)`;
+      } else if (qNum <= 4) {
+        return `Part 2 • Câu ${qNum}/11: Miêu tả bức tranh | Chuẩn bị: 45s • Nói: 30s (Tiêu chí: Ngữ pháp, Từ vựng, Tính gắn kết)`;
+      } else if (qNum <= 7) {
+        const respTime = qNum === 7 ? '30s' : '15s';
+        return `Part 3 • Câu ${qNum}/11: Trả lời phỏng vấn | Chuẩn bị: 3s • Nói: ${respTime} (Tiêu chí: Độ trôi chảy, Trực tiếp, Tự nhiên)`;
+      } else if (qNum <= 10) {
+        const respTime = qNum === 10 ? '30s' : '15s';
+        return `Part 4 • Câu ${qNum}/11: Dùng thông tin có sẵn | Đọc bảng: 45s • Chuẩn bị: 3s • Nói: ${respTime} (Tiêu chí: Độ chính xác thông tin)`;
+      } else {
+        return `Part 5 • Câu 11/11: Bày tỏ quan điểm | Chuẩn bị: 45s • Nói: 60s (Tiêu chí: Lập luận, Dẫn chứng, Độ mạch lạc)`;
+      }
+    } else {
+      const qNum = currentWritingQ.questionNumber;
+      if (qNum <= 5) {
+        return `Part 1 • Câu ${qNum}/8: Viết câu theo tranh | Thời gian quy định: 8 phút cho cả 5 câu (Khuyên dùng: ~1.5 phút/câu) • Đúng 1 câu duy nhất`;
+      } else if (qNum <= 7) {
+        return `Part 2 • Câu ${qNum}/8: Phản hồi email thương mại | Thời gian quy định: 10 phút riêng cho email này • Giải quyết đủ 3 yêu cầu`;
+      } else {
+        return `Part 3 • Câu 8/8: Viết bài luận quan điểm | Thời gian quy định: 30 phút • Độ dài tối thiểu: 300 từ`;
+      }
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Header */}
@@ -268,13 +321,13 @@ export const App: React.FC = () => {
               className={`pill-btn ${section === 'speaking' ? 'active' : ''}`}
               onClick={() => setSection('speaking')}
             >
-              <Mic size={15} /> Speaking (Q1-11)
+              <Mic size={15} /> Speaking (11 Câu)
             </button>
             <button
               className={`pill-btn ${section === 'writing' ? 'active' : ''}`}
               onClick={() => setSection('writing')}
             >
-              <PenTool size={15} /> Writing (Q1-8)
+              <PenTool size={15} /> Writing (8 Câu)
             </button>
           </div>
 
@@ -293,6 +346,11 @@ export const App: React.FC = () => {
               <Clock size={15} /> Luyện Thi ETS
             </button>
           </div>
+
+          {/* Official ETS Format Guide Button */}
+          <button className="action-btn" onClick={() => setShowFormatModal(true)}>
+            <HelpCircle size={15} /> Barem & Cấu Trúc ETS
+          </button>
 
           {/* Theme Toggle (Sáng / Tối) */}
           <button
@@ -349,29 +407,49 @@ export const App: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="main-workspace">
-        {/* Question Navigation Bar */}
-        <div className="question-nav-bar">
-          {section === 'speaking'
-            ? SPEAKING_QUESTIONS.map((q, idx) => (
-                <button
-                  key={q.id}
-                  className={`q-tab ${idx === speakingIndex ? 'active' : ''}`}
-                  onClick={() => setSpeakingIndex(idx)}
-                >
-                  <span>Q{q.questionNumber}</span>
-                  <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
-                </button>
-              ))
-            : WRITING_QUESTIONS.map((q, idx) => (
-                <button
-                  key={q.id}
-                  className={`q-tab ${idx === writingIndex ? 'active' : ''}`}
-                  onClick={() => setWritingIndex(idx)}
-                >
-                  <span>Q{q.questionNumber}</span>
-                  <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
-                </button>
-              ))}
+        {/* Question Navigation Bar with Next / Prev arrows */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+          <button
+            className="action-btn"
+            onClick={handlePrevQuestion}
+            disabled={currentIndex === 0}
+            style={{ opacity: currentIndex === 0 ? 0.4 : 1 }}
+          >
+            <ChevronLeft size={16} /> Câu trước
+          </button>
+
+          <div className="question-nav-bar" style={{ flex: 1, justifyContent: 'center' }}>
+            {section === 'speaking'
+              ? SPEAKING_QUESTIONS.map((q, idx) => (
+                  <button
+                    key={q.id}
+                    className={`q-tab ${idx === speakingIndex ? 'active' : ''}`}
+                    onClick={() => setSpeakingIndex(idx)}
+                  >
+                    <span>Q{q.questionNumber}</span>
+                    <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
+                  </button>
+                ))
+              : WRITING_QUESTIONS.map((q, idx) => (
+                  <button
+                    key={q.id}
+                    className={`q-tab ${idx === writingIndex ? 'active' : ''}`}
+                    onClick={() => setWritingIndex(idx)}
+                  >
+                    <span>Q{q.questionNumber}</span>
+                    <span style={{ opacity: 0.6, fontSize: '0.72rem' }}>P{q.part}</span>
+                  </button>
+                ))}
+          </div>
+
+          <button
+            className="action-btn"
+            onClick={handleNextQuestion}
+            disabled={currentIndex === totalQuestions - 1}
+            style={{ opacity: currentIndex === totalQuestions - 1 ? 0.4 : 1 }}
+          >
+            Câu tiếp theo <ChevronRight size={16} />
+          </button>
         </div>
 
         {/* Split Pane Grid */}
@@ -383,10 +461,8 @@ export const App: React.FC = () => {
                 <h2 className="part-title">
                   {section === 'speaking' ? currentSpeakingQ.partName : currentWritingQ.partName}
                 </h2>
-                <p className="part-subtitle">
-                  {section === 'speaking'
-                    ? `Câu hỏi ${currentSpeakingQ.questionNumber} / 11 | Chuẩn bị: ${currentSpeakingQ.prepTime}s | Trả lời: ${currentSpeakingQ.responseTime}s`
-                    : `Câu hỏi ${currentWritingQ.questionNumber} / 8 | Thời gian quy định: ${Math.round(currentWritingQ.timeLimit / 60)} phút`}
+                <p className="part-subtitle" style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>
+                  {getQuestionTimingSubtitle()}
                 </p>
               </div>
 
@@ -681,6 +757,119 @@ export const App: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Official ETS Structure & Timing Modal */}
+      {showFormatModal && (
+        <div className="modal-overlay" onClick={() => setShowFormatModal(false)}>
+          <div className="modal-content" style={{ maxWidth: '820px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Clock size={22} color="#3b82f6" />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Cấu Trúc & Thời Gian Thi TOEIC SW Chuẩn ETS Mới Nhất</h3>
+              </div>
+              <button className="action-btn" onClick={() => setShowFormatModal(false)}>✕</button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', fontSize: '0.88rem' }}>
+              {/* Speaking Table */}
+              <div>
+                <h4 style={{ color: '#38bdf8', marginBottom: '0.4rem', fontWeight: 700 }}>
+                  🎙️ TOEIC Speaking: 11 Câu Hỏi (~20 Phút) • Thang Điểm 0 - 200
+                </h4>
+                <table className="info-table">
+                  <thead>
+                    <tr>
+                      <th>Phần thi</th>
+                      <th>Số câu</th>
+                      <th>Thời gian chuẩn bị</th>
+                      <th>Thời gian trả lời</th>
+                      <th>Tiêu chí chấm điểm</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Part 1:</strong> Đọc to đoạn văn</td>
+                      <td>Câu 1–2</td>
+                      <td>45 giây/câu</td>
+                      <td>45 giây/câu</td>
+                      <td>Phát âm, Trọng âm, Ngữ điệu</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 2:</strong> Miêu tả tranh</td>
+                      <td>Câu 3–4</td>
+                      <td>45 giây/câu</td>
+                      <td>30 giây/câu</td>
+                      <td>Ngữ pháp, Từ vựng, Bố cục cảnh</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 3:</strong> Trả lời câu hỏi</td>
+                      <td>Câu 5–7</td>
+                      <td>3 giây/câu</td>
+                      <td>Q5-Q6: 15s • Q7: 30s</td>
+                      <td>Trôi chảy, Trực diện, Đầy đủ ý</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 4:</strong> Dùng thông tin có sẵn</td>
+                      <td>Câu 8–10</td>
+                      <td>45s đọc bảng • 3s/câu</td>
+                      <td>Q8-Q9: 15s • Q10: 30s</td>
+                      <td>Độ chính xác thông tin, Lịch thiệp</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 5:</strong> Bày tỏ quan điểm</td>
+                      <td>Câu 11</td>
+                      <td>45 giây</td>
+                      <td>60 giây</td>
+                      <td>Lập luận, Dẫn chứng, Liên kết ý</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Writing Table */}
+              <div>
+                <h4 style={{ color: '#06b6d4', marginBottom: '0.4rem', fontWeight: 700 }}>
+                  ✍️ TOEIC Writing: 8 Câu Hỏi (~60 Phút) • Thang Điểm 0 - 200
+                </h4>
+                <table className="info-table">
+                  <thead>
+                    <tr>
+                      <th>Phần thi</th>
+                      <th>Số câu</th>
+                      <th>Thời gian làm bài</th>
+                      <th>Quy định đề bài</th>
+                      <th>Tiêu chí chấm điểm</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Part 1:</strong> Viết câu theo tranh</td>
+                      <td>Câu 1–5</td>
+                      <td><strong>8 phút</strong> cho cả 5 câu (~1.5p/câu)</td>
+                      <td>ĐÚNG 1 CÂU duy nhất, dùng đủ 2 từ khoá</td>
+                      <td>Độ chính xác ngữ pháp, Quan hệ với tranh</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 2:</strong> Phản hồi email</td>
+                      <td>Câu 6–7</td>
+                      <td><strong>10 phút</strong> riêng cho mỗi email</td>
+                      <td>Thư thương mại giải quyết 3 yêu cầu</td>
+                      <td>Văn phong, Bố cục, Ngữ pháp, Từ vựng</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Part 3:</strong> Viết bài luận</td>
+                      <td>Câu 8</td>
+                      <td><strong>30 phút</strong></td>
+                      <td>Bài luận hoàn chỉnh tối thiểu 300 từ</td>
+                      <td>Mạch lạc, Cấu trúc câu phức, Từ vựng C1</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Result & Evaluation Modal */}
       {showResultModal && evaluationResult && (

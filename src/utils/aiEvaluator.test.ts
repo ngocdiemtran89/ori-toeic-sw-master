@@ -31,7 +31,7 @@ describe('aiEvaluator - ETS Scoring Engine', () => {
   });
 
   it('evaluates Writing Part 2 email response requirements', async () => {
-    const q6 = WRITING_QUESTIONS[1]; // Email response
+    const q6 = WRITING_QUESTIONS.find(q => q.questionNumber === 6)!; // Email response (Part 2)
     const emailResponse = `Dear Mr. Miller,
 
 Thank you very much for your prompt response regarding our Annual Gala Dinner reservation. I am delighted to confirm that our company event will proceed on December 18th in the Grand Ballroom as planned.
